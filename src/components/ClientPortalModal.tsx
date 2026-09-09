@@ -1,0 +1,227 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  X, 
+  FolderKanban, 
+  Sparkles, 
+  Clock, 
+  CheckCircle2, 
+  LogOut, 
+  ExternalLink,
+  RefreshCw 
+} from 'lucide-react';
+import type { User } from 'firebase/auth';
+import type { ProjectInquiry } from '../types';
+import { getUserInquiries, signInWithGoogle, logoutUser } from '../lib/firebase';
+
+interface ClientPortalModalProps {
+  user: User | null;
+  onClose: () => void;
+  onStartNewProject: () => void;
+}
+
+export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
+  user,
+  onClose,
+  onStartNewProject,
+}) => {
+  const [inquiries, setInquiries] = useState<ProjectInquiry[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
+
+  const fetchInquiries = async () => {
+    setLoading(true);
+    try {
+      const data = await getUserInquiries(user?.uid || 'guest', user?.email || undefined);
+      setInquiries(data);
+    } catch (e) {
+      console.error('Failed to load inquiries:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInquiries();
+  }, [user]);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setSigningIn(true);
+      await signInWithGoogle();
+    } catch (e) {
+      console.error('Google sign in error:', e);
+    } finally {
+      setSigningIn(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await logoutUser();
+    } catch (e) {
+      console.error('Sign out error:', e);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
+      <div className="relative w-full max-w-2xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-indigo-500/20 my-8">
+        <div className="rounded-[23px] bg-[#0c0822] border border-purple-500/30 p-6 sm:p-8 backdrop-blur-2xl">
+          
+          {/* Header */}
+          <div className="flex items-center justify-between pb-4 mb-6 border-b border-purple-500/20">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-purple-900/60 border border-purple-500/30 flex items-center justify-center text-purple-300">
+                <FolderKanban className="w-5 h-5 text-fuchsia-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Client Portal & Project Tracker</h3>
+                <p className="text-xs text-purple-300/70">
+                  {user ? `Connected as ${user.displayName || user.email}` : 'Guest Session (Local + Cloud)'}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={onClose}
+              id="client-portal-close-btn"
+              className="p-1.5 rounded-full bg-purple-950/80 text-purple-300 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* User Auth Ribbon */}
+          <div className="mb-6 p-4 rounded-2xl bg-purple-950/40 border border-purple-500/20 flex flex-wrap items-center justify-between gap-3">
+            {user ? (
+              <div className="flex items-center gap-3">
+                {user.photoURL && (
+                  <img
+                    src={user.photoURL}
+                    alt="avatar"
+                    referrerPolicy="no-referrer"
+                    className="w-8 h-8 rounded-full border border-purple-400/50 object-cover"
+                  />
+                )}
+                <div>
+                  <div className="text-xs font-bold text-white">{user.displayName || 'Authenticated Client'}</div>
+                  <div className="text-[11px] text-purple-300/70 font-mono">{user.email}</div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs text-slate-300">
+                <span className="font-semibold text-white">Sign in with Google</span> to sync your project briefs across devices and receive live status updates.
+              </div>
+            )}
+
+            <div>
+              {user ? (
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/40 border border-red-500/30 text-xs text-red-300 transition-colors"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleGoogleSignIn}
+                  disabled={signingIn}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold tracking-wider hover:opacity-95 shadow-md shadow-purple-950/40"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{signingIn ? 'Connecting...' : 'Sign In with Google'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* List of Inquiries */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-purple-300 font-mono">
+                YOUR SUBMITTED INQUIRIES ({inquiries.length})
+              </span>
+              <button
+                onClick={fetchInquiries}
+                className="text-xs text-purple-400 hover:text-purple-200 flex items-center gap-1"
+              >
+                <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} /> Refresh
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="py-12 text-center text-xs text-purple-300">
+                Querying Firestore records...
+              </div>
+            ) : inquiries.length === 0 ? (
+              <div className="py-10 px-4 text-center rounded-2xl bg-purple-950/20 border border-purple-500/15 space-y-3">
+                <p className="text-xs text-slate-400">
+                  You haven't submitted any project requests yet.
+                </p>
+                <button
+                  onClick={() => {
+                    onClose();
+                    onStartNewProject();
+                  }}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold"
+                >
+                  Start a Project Brief →
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+                {inquiries.map((inq) => (
+                  <div
+                    key={inq.id || inq.createdAt}
+                    className="p-4 rounded-2xl bg-purple-950/30 border border-purple-500/20 space-y-2 hover:border-purple-400/40 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white">
+                        {inq.projectType}
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider font-semibold bg-fuchsia-950 text-fuchsia-300 border border-fuchsia-500/30">
+                        {inq.status || 'Received'}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-slate-300 line-clamp-2">
+                      {inq.description}
+                    </p>
+
+                    <div className="pt-2 border-t border-purple-500/10 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-purple-400/80">
+                      <span>Budget: {inq.budget}</span>
+                      <span>
+                        {new Date(inq.createdAt).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="pt-6 mt-6 border-t border-purple-500/20 flex items-center justify-between">
+            <span className="text-[11px] text-slate-400 font-mono">
+              Nexus Devs Cloud Persistence Active
+            </span>
+            <button
+              onClick={() => {
+                onClose();
+                onStartNewProject();
+              }}
+              className="px-4 py-2 rounded-xl bg-purple-900/60 hover:bg-purple-800 text-white text-xs font-bold"
+            >
+              Submit New Brief +
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};

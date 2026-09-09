@@ -1,0 +1,38 @@
+{
+  "entities": {
+    "ProjectInquiry": {
+      "collection": "project_inquiries",
+      "fields": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "company": { "type": "string" },
+        "projectType": { "type": "string" },
+        "budget": { "type": "string" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "userId": { "type": "string" },
+        "status": { "type": "string" }
+      }
+    },
+    "AgencySettings": {
+      "collection": "agency_settings",
+      "fields": {
+        "projects": { "type": "string" },
+        "clients": { "type": "string" },
+        "satisfaction": { "type": "string" },
+        "support": { "type": "string" }
+      }
+    },
+    "ClientReview": {
+      "collection": "client_reviews",
+      "fields": {
+        "name": { "type": "string" },
+        "rating": { "type": "number" },
+        "review": { "type": "string" },
+        "company": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    }
+  }
+}
