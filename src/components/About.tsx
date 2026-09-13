@@ -23,7 +23,7 @@ export const About: React.FC = () => {
   ];
 
   return (
-    <section id="about" className="relative py-24 z-20 overflow-hidden">
+    <section id="about" className="relative py-20 sm:py-28 z-20 overflow-hidden">
       {/* Glow elements */}
       <div className="absolute -top-10 left-1/4 w-96 h-96 bg-purple-900/15 blur-[140px] pointer-events-none"></div>
 

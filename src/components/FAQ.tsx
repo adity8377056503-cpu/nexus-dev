@@ -10,7 +10,7 @@ export const FAQ: React.FC = () => {
   };
 
   return (
-    <section className="relative py-24 z-20">
+    <section id="faq" className="relative py-24 z-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -47,10 +47,10 @@ export const FAQ: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => toggleAccordion(idx)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none"
+                  className="w-full p-4 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none min-h-[48px]"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono text-purple-400/70">
+                    <span className="text-xs font-mono text-purple-400/70 shrink-0">
                       0{idx + 1}
                     </span>
                     <span className="text-sm sm:text-base font-bold text-white tracking-wide">
@@ -58,7 +58,7 @@ export const FAQ: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 ${
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-300 ${
                     isOpen 
                       ? 'bg-gradient-to-tr from-purple-600 to-pink-600 text-white rotate-180' 
                       : 'bg-purple-950 text-purple-300'

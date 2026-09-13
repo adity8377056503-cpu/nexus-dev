@@ -5,6 +5,9 @@ import {
   signInWithPopup, 
   signOut, 
   onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   type User 
 } from 'firebase/auth';
 import { 
@@ -57,8 +60,42 @@ export const signInWithGoogle = async (): Promise<User | null> => {
   }
 };
 
+export const signInWithEmail = async (email: string, pass: string): Promise<User> => {
+  try {
+    const res = await signInWithEmailAndPassword(auth, email, pass);
+    return res.user;
+  } catch (error) {
+    console.error('Error signing in with email/password:', error);
+    throw error;
+  }
+};
+
+export const signUpWithEmail = async (email: string, pass: string): Promise<User> => {
+  try {
+    const res = await createUserWithEmailAndPassword(auth, email, pass);
+    return res.user;
+  } catch (error) {
+    console.error('Error signing up with email/password:', error);
+    throw error;
+  }
+};
+
+export const sendPasswordReset = async (email: string): Promise<void> => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+    throw error;
+  }
+};
+
 export const logoutUser = async (): Promise<void> => {
   try {
+    try {
+      localStorage.removeItem('nexus_client_session');
+    } catch {
+      // ignore
+    }
     await signOut(auth);
   } catch (error) {
     console.error('Error signing out:', error);

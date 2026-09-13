@@ -359,14 +359,14 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
 
       {/* 1. Leave a Review Modal */}
       {showReviewModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-lg rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/40 via-purple-500/30 to-transparent shadow-2xl">
-            <div className="rounded-[23px] bg-[#0d0926] border border-purple-500/30 p-6 sm:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-lg rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/40 via-purple-500/30 to-transparent shadow-2xl my-auto max-h-[92vh] flex flex-col">
+            <div className="rounded-[23px] bg-[#0d0926] border border-purple-500/30 p-5 sm:p-8 overflow-y-auto">
               
               {/* Header */}
               <div className="flex items-center justify-between pb-4 mb-5 border-b border-purple-500/20">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-purple-900/50 border border-purple-500/30 flex items-center justify-center text-fuchsia-400">
+                  <div className="w-9 h-9 rounded-xl bg-purple-900/50 border border-purple-500/30 flex items-center justify-center text-fuchsia-400 shrink-0">
                     <MessageSquarePlus className="w-4 h-4" />
                   </div>
                   <div>
@@ -380,7 +380,7 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
                 </div>
                 <button
                   onClick={() => setShowReviewModal(false)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-purple-900/40 transition-colors"
+                  className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-purple-900/40 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -403,7 +403,7 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
                   <div className="pt-3">
                     <button
                       onClick={() => setShowReviewModal(false)}
-                      className="px-6 py-2.5 rounded-full bg-purple-900/50 hover:bg-purple-900/80 border border-purple-500/30 text-xs font-semibold text-white transition-colors"
+                      className="w-full sm:w-auto px-6 py-3 rounded-full bg-purple-900/50 hover:bg-purple-900/80 border border-purple-500/30 text-xs font-semibold text-white transition-colors min-h-[44px]"
                     >
                       Close Window
                     </button>
@@ -424,30 +424,32 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
                     <label className="block text-xs font-semibold uppercase tracking-wider text-purple-300 mb-2">
                       Your Rating <span className="text-fuchsia-400">*</span>
                     </label>
-                    <div className="flex items-center gap-2">
-                      {[1, 2, 3, 4, 5].map((starValue) => {
-                        const isFilled = (hoverRating || rating) >= starValue;
-                        return (
-                          <button
-                            key={starValue}
-                            type="button"
-                            onClick={() => setRating(starValue)}
-                            onMouseEnter={() => setHoverRating(starValue)}
-                            onMouseLeave={() => setHoverRating(0)}
-                            className="p-1 rounded-lg hover:scale-110 transition-transform focus:outline-none"
-                            aria-label={`Rate ${starValue} stars`}
-                          >
-                            <Star
-                              className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
-                                isFilled
-                                  ? 'fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
-                                  : 'fill-purple-950 text-purple-700/60 hover:text-purple-500'
-                              }`}
-                            />
-                          </button>
-                        );
-                      })}
-                      <span className="text-xs text-purple-300/80 font-mono ml-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((starValue) => {
+                          const isFilled = (hoverRating || rating) >= starValue;
+                          return (
+                            <button
+                              key={starValue}
+                              type="button"
+                              onClick={() => setRating(starValue)}
+                              onMouseEnter={() => setHoverRating(starValue)}
+                              onMouseLeave={() => setHoverRating(0)}
+                              className="p-1.5 rounded-lg hover:scale-110 transition-transform focus:outline-none min-h-[40px] min-w-[40px] flex items-center justify-center"
+                              aria-label={`Rate ${starValue} stars`}
+                            >
+                              <Star
+                                className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
+                                  isFilled
+                                    ? 'fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
+                                    : 'fill-purple-950 text-purple-700/60 hover:text-purple-500'
+                                }`}
+                              />
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <span className="text-xs text-purple-300/80 font-mono w-full sm:w-auto">
                         {ratingLabels[hoverRating || rating]}
                       </span>
                     </div>
@@ -464,7 +466,7 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
                       placeholder="e.g. Alex Henderson"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl bg-purple-950/60 border border-purple-500/25 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-all placeholder:text-purple-400/40"
+                      className="w-full px-4 py-2.5 rounded-xl bg-purple-950/60 border border-purple-500/25 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-all placeholder:text-purple-400/40 min-h-[44px]"
                     />
                   </div>
 
@@ -478,7 +480,7 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
                       placeholder="e.g. Founder at Horizon AI"
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl bg-purple-950/60 border border-purple-500/25 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-all placeholder:text-purple-400/40"
+                      className="w-full px-4 py-2.5 rounded-xl bg-purple-950/60 border border-purple-500/25 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-all placeholder:text-purple-400/40 min-h-[44px]"
                     />
                   </div>
 
@@ -506,18 +508,18 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
                   </div>
 
                   {/* Buttons */}
-                  <div className="pt-2 flex items-center justify-end gap-3">
+                  <div className="pt-2 flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
                     <button
                       type="button"
                       onClick={() => setShowReviewModal(false)}
-                      className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition-colors"
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition-colors min-h-[44px]"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white text-xs font-bold tracking-wider hover:shadow-lg hover:shadow-fuchsia-500/30 transition-all disabled:opacity-50 flex items-center gap-2"
+                      className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white text-xs font-bold tracking-wider hover:shadow-lg hover:shadow-fuchsia-500/30 transition-all disabled:opacity-50 flex items-center justify-center gap-2 min-h-[44px]"
                     >
                       {submitting ? (
                         <>

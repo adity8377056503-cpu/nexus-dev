@@ -15,7 +15,7 @@ export const CaseStudy: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <section className="relative py-24 z-20">
+    <section id="case-study" className="relative py-24 z-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Label */}
@@ -47,20 +47,20 @@ export const CaseStudy: React.FC = () => {
             </div>
 
             {/* Large Browser Mockup */}
-            <div className="relative rounded-2xl border border-purple-500/25 bg-[#090518] shadow-2xl overflow-hidden mb-10">
+            <div className="relative rounded-2xl border border-purple-500/25 bg-[#090518] shadow-2xl overflow-hidden mb-8 sm:mb-10">
               {/* Browser Chrome Header */}
-              <div className="px-4 py-3 bg-[#0f0928] border-b border-purple-500/20 flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500/70"></span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500/70"></span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70"></span>
+              <div className="px-3 sm:px-4 py-2 sm:py-3 bg-[#0f0928] border-b border-purple-500/20 flex items-center justify-between">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-rose-500/70"></span>
+                  <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-amber-500/70"></span>
+                  <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-emerald-500/70"></span>
                 </div>
-                <div className="px-4 py-1 rounded-md bg-purple-950/80 border border-purple-500/20 text-xs font-mono text-purple-300/80">
+                <div className="px-2.5 sm:px-4 py-1 rounded-md bg-purple-950/80 border border-purple-500/20 text-[10px] sm:text-xs font-mono text-purple-300/80 truncate max-w-[170px] sm:max-w-none">
                   https://app.nexora.com/analytics/live
                 </div>
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="p-1 text-purple-300 hover:text-white"
+                  className="p-1 text-purple-300 hover:text-white shrink-0 min-h-[36px] min-w-[36px] flex items-center justify-center"
                   title="Expand Case Study"
                 >
                   <Maximize2 className="w-3.5 h-3.5" />
@@ -68,10 +68,12 @@ export const CaseStudy: React.FC = () => {
               </div>
 
               {/* Mockup Preview Visual */}
-              <div className="relative aspect-[16/9] sm:aspect-[21/9] bg-[#0c0822] overflow-hidden">
+              <div className="relative aspect-[16/10] sm:aspect-[21/9] bg-[#0c0822] overflow-hidden">
                 <img
                   src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1600&auto=format&fit=crop"
-                  alt="Nexora Platform Mockup"
+                  alt="Nexora Platform enterprise analytics and live trading dashboard case study by Nexus Devs"
+                  loading="lazy"
+                  decoding="async"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-center brightness-90"
                 />
@@ -79,24 +81,24 @@ export const CaseStudy: React.FC = () => {
                 {/* Floating Analytics Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0c0822] via-transparent to-transparent opacity-80"></div>
                 
-                <div className="absolute bottom-6 left-6 right-6 flex flex-wrap items-center justify-between gap-4">
-                  <div className="p-3 rounded-xl bg-[#090518]/90 border border-purple-500/30 backdrop-blur-md">
-                    <span className="text-[10px] font-mono text-purple-300 uppercase block">Monitored Volume</span>
-                    <span className="text-base font-bold text-white">$4.8B+ / Quarterly</span>
+                <div className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 flex flex-wrap items-center justify-between gap-2 sm:gap-4">
+                  <div className="p-2 sm:p-3 rounded-xl bg-[#090518]/90 border border-purple-500/30 backdrop-blur-md">
+                    <span className="text-[9px] sm:text-[10px] font-mono text-purple-300 uppercase block">Monitored Volume</span>
+                    <span className="text-xs sm:text-base font-bold text-white">$4.8B+ / Quarterly</span>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-[#090518]/90 border border-purple-500/30 backdrop-blur-md">
-                    <span className="text-[10px] font-mono text-fuchsia-300 uppercase block">Global Latency</span>
-                    <span className="text-base font-bold text-emerald-400">42ms Edge</span>
+                  <div className="p-2 sm:p-3 rounded-xl bg-[#090518]/90 border border-purple-500/30 backdrop-blur-md">
+                    <span className="text-[9px] sm:text-[10px] font-mono text-fuchsia-300 uppercase block">Global Latency</span>
+                    <span className="text-xs sm:text-base font-bold text-emerald-400">42ms Edge</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* 4-Step Narrative Breakdown: Challenge, Solution, Design, Development, Outcome */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10">
               
-              <div className="p-5 rounded-2xl bg-purple-950/25 border border-purple-500/15">
+              <div className="p-4 sm:p-5 rounded-2xl bg-purple-950/25 border border-purple-500/15">
                 <div className="flex items-center gap-2 mb-2 text-rose-400">
                   <Target className="w-4 h-4" />
                   <span className="text-xs font-bold uppercase tracking-wider font-mono">1. Challenge</span>
@@ -106,7 +108,7 @@ export const CaseStudy: React.FC = () => {
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-purple-950/25 border border-purple-500/15">
+              <div className="p-4 sm:p-5 rounded-2xl bg-purple-950/25 border border-purple-500/15">
                 <div className="flex items-center gap-2 mb-2 text-purple-400">
                   <Sparkles className="w-4 h-4" />
                   <span className="text-xs font-bold uppercase tracking-wider font-mono">2. Solution</span>
@@ -116,7 +118,7 @@ export const CaseStudy: React.FC = () => {
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-purple-950/25 border border-purple-500/15">
+              <div className="p-4 sm:p-5 rounded-2xl bg-purple-950/25 border border-purple-500/15">
                 <div className="flex items-center gap-2 mb-2 text-fuchsia-400">
                   <Zap className="w-4 h-4" />
                   <span className="text-xs font-bold uppercase tracking-wider font-mono">3. Design</span>
@@ -126,7 +128,7 @@ export const CaseStudy: React.FC = () => {
                 </p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-purple-950/25 border border-purple-500/15">
+              <div className="p-4 sm:p-5 rounded-2xl bg-purple-950/25 border border-purple-500/15">
                 <div className="flex items-center gap-2 mb-2 text-emerald-400">
                   <TrendingUp className="w-4 h-4" />
                   <span className="text-xs font-bold uppercase tracking-wider font-mono">4. Outcome</span>
@@ -140,7 +142,7 @@ export const CaseStudy: React.FC = () => {
 
             {/* Bottom Metrics Bar & CTA */}
             <div className="pt-6 border-t border-purple-500/20 flex flex-col sm:flex-row items-center justify-between gap-6">
-              <div className="flex flex-wrap items-center gap-6 text-xs text-purple-300/80">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 sm:gap-6 text-xs text-purple-300/80">
                 <div>
                   <span className="font-bold text-white text-sm">+240%</span> Conversion Rate
                 </div>
@@ -158,7 +160,7 @@ export const CaseStudy: React.FC = () => {
               <button
                 onClick={() => setModalOpen(true)}
                 id="case-study-cta-btn"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold tracking-wider hover:opacity-95 shadow-lg shadow-purple-950/50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold tracking-wider hover:opacity-95 shadow-lg shadow-purple-950/50 min-h-[44px]"
               >
                 <span>VIEW CASE STUDY</span>
                 <ArrowUpRight className="w-4 h-4" />
@@ -172,24 +174,24 @@ export const CaseStudy: React.FC = () => {
 
       {/* Case Study Deep Dive Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
-          <div className="relative w-full max-w-3xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-transparent my-8">
-            <div className="rounded-[23px] bg-[#0c0822] border border-purple-500/30 p-6 sm:p-10 backdrop-blur-2xl space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-3xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-transparent my-auto max-h-[92vh] flex flex-col">
+            <div className="rounded-[23px] bg-[#0c0822] border border-purple-500/30 p-5 sm:p-10 backdrop-blur-2xl space-y-6 overflow-y-auto">
               
               <div className="flex items-center justify-between pb-4 border-b border-purple-500/20">
                 <div>
                   <span className="text-xs font-mono text-fuchsia-400 font-bold">CASE STUDY REPORT</span>
-                  <h3 className="text-xl sm:text-2xl font-bold text-white">Nexora Business Intelligence</h3>
+                  <h3 className="text-lg sm:text-2xl font-bold text-white">Nexora Business Intelligence</h3>
                 </div>
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="p-2 rounded-full bg-purple-950/60 text-purple-300 hover:text-white"
+                  className="p-2 rounded-full bg-purple-950/60 text-purple-300 hover:text-white min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
+              <div className="space-y-4 text-xs sm:text-sm text-slate-300 leading-relaxed">
                 <p>
                   Nexus Devs was engaged by Nexora to overhaul their core B2B fintech application. The original solution struggled with massive latency spikes during market open, leading to executive churn and developer burn-out.
                 </p>
@@ -216,7 +218,7 @@ export const CaseStudy: React.FC = () => {
               <div className="pt-6 border-t border-purple-500/20 flex justify-end">
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="px-6 py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 text-white text-xs font-bold"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-purple-900/60 hover:bg-purple-800 text-white text-xs font-bold min-h-[44px]"
                 >
                   Close Case Study
                 </button>

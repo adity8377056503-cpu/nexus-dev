@@ -78,7 +78,7 @@ export const Stats: React.FC = () => {
         
         {/* Main Stats Card Container */}
         <div className="relative rounded-3xl p-[1px] bg-gradient-to-r from-purple-500/25 via-fuchsia-500/20 to-indigo-500/25 shadow-xl shadow-purple-950/40">
-          <div className="rounded-[23px] bg-[#0c0822]/85 backdrop-blur-xl px-6 py-8 sm:p-10 border border-purple-500/20">
+          <div className="rounded-[23px] bg-[#0c0822]/85 backdrop-blur-xl px-4 py-6 sm:p-10 border border-purple-500/20">
             
             {/* Top Toolbar: Placeholder notice & edit button */}
             <div className="flex flex-wrap items-center justify-between gap-3 pb-6 mb-6 border-b border-purple-500/15">
@@ -98,7 +98,7 @@ export const Stats: React.FC = () => {
                 <button
                   onClick={() => setIsEditing(!isEditing)}
                   id="stats-edit-toggle-btn"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-900/30 hover:bg-purple-900/50 border border-purple-500/25 text-xs text-purple-200 hover:text-white transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-900/30 hover:bg-purple-900/50 border border-purple-500/25 text-xs text-purple-200 hover:text-white transition-colors min-h-[36px]"
                 >
                   <Settings2 className="w-3.5 h-3.5 text-fuchsia-400" />
                   <span>{isEditing ? 'Close Editor' : 'Edit Values'}</span>
@@ -121,14 +121,14 @@ export const Stats: React.FC = () => {
                     <RefreshCw className="w-3 h-3" /> Reset Defaults
                   </button>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-[11px] font-medium text-slate-400 mb-1">Projects</label>
                     <input
                       type="text"
                       value={tempStats.projects}
                       onChange={(e) => setTempStats({ ...tempStats, projects: e.target.value })}
-                      className="w-full px-3 py-1.5 rounded-lg bg-purple-950/60 border border-purple-500/30 text-white text-xs font-mono focus:border-fuchsia-400 outline-none"
+                      className="w-full px-3 py-2 rounded-lg bg-purple-950/60 border border-purple-500/30 text-white text-xs font-mono focus:border-fuchsia-400 outline-none"
                     />
                   </div>
                   <div>
@@ -137,7 +137,7 @@ export const Stats: React.FC = () => {
                       type="text"
                       value={tempStats.clients}
                       onChange={(e) => setTempStats({ ...tempStats, clients: e.target.value })}
-                      className="w-full px-3 py-1.5 rounded-lg bg-purple-950/60 border border-purple-500/30 text-white text-xs font-mono focus:border-fuchsia-400 outline-none"
+                      className="w-full px-3 py-2 rounded-lg bg-purple-950/60 border border-purple-500/30 text-white text-xs font-mono focus:border-fuchsia-400 outline-none"
                     />
                   </div>
                   <div>
@@ -146,7 +146,7 @@ export const Stats: React.FC = () => {
                       type="text"
                       value={tempStats.satisfaction}
                       onChange={(e) => setTempStats({ ...tempStats, satisfaction: e.target.value })}
-                      className="w-full px-3 py-1.5 rounded-lg bg-purple-950/60 border border-purple-500/30 text-white text-xs font-mono focus:border-fuchsia-400 outline-none"
+                      className="w-full px-3 py-2 rounded-lg bg-purple-950/60 border border-purple-500/30 text-white text-xs font-mono focus:border-fuchsia-400 outline-none"
                     />
                   </div>
                   <div>
@@ -155,14 +155,14 @@ export const Stats: React.FC = () => {
                       type="text"
                       value={tempStats.support}
                       onChange={(e) => setTempStats({ ...tempStats, support: e.target.value })}
-                      className="w-full px-3 py-1.5 rounded-lg bg-purple-950/60 border border-purple-500/30 text-white text-xs font-mono focus:border-fuchsia-400 outline-none"
+                      className="w-full px-3 py-2 rounded-lg bg-purple-950/60 border border-purple-500/30 text-white text-xs font-mono focus:border-fuchsia-400 outline-none"
                     />
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:opacity-90"
+                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold hover:opacity-90 min-h-[38px]"
                   >
                     Save Changes
                   </button>
@@ -171,31 +171,31 @@ export const Stats: React.FC = () => {
             ) : null}
 
             {/* Grid of 4 Stat Blocks */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
               {statItems.map((item, idx) => {
                 const Icon = item.icon;
                 return (
                   <div 
                     key={item.key}
-                    className="group relative p-4 rounded-2xl bg-purple-950/20 border border-purple-500/10 hover:border-purple-500/30 transition-all duration-300 hover:-translate-y-0.5"
+                    className="group relative p-3 sm:p-4 rounded-2xl bg-purple-950/20 border border-purple-500/10 hover:border-purple-500/30 transition-all duration-300 hover:-translate-y-0.5"
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="w-8 h-8 rounded-xl bg-purple-900/40 border border-purple-500/20 flex items-center justify-center text-purple-300 group-hover:text-fuchsia-300 transition-colors">
-                        <Icon className="w-4 h-4" />
+                    <div className="flex items-center justify-between mb-2 sm:mb-3">
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-purple-900/40 border border-purple-500/20 flex items-center justify-center text-purple-300 group-hover:text-fuchsia-300 transition-colors">
+                        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </div>
                       <span className="text-[10px] font-mono text-purple-400/50">
                         0{idx + 1}
                       </span>
                     </div>
 
-                    <div className="space-y-1">
-                      <div className={`text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r ${item.color}`}>
+                    <div className="space-y-0.5 sm:space-y-1">
+                      <div className={`text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r ${item.color}`}>
                         {item.value}
                       </div>
-                      <div className="text-xs sm:text-sm font-semibold text-white">
+                      <div className="text-xs sm:text-sm font-semibold text-white truncate sm:whitespace-normal">
                         {item.label}
                       </div>
-                      <div className="text-[11px] text-slate-400 leading-snug">
+                      <div className="text-[10px] sm:text-[11px] text-slate-400 leading-tight sm:leading-snug">
                         {item.subtext}
                       </div>
                     </div>

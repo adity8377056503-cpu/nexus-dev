@@ -100,3 +100,11 @@ export interface AgencyStats {
   satisfaction: string;
   support: string;
 }
+
+export interface ClientUser {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL?: string | null;
+  isDemo?: boolean;
+}

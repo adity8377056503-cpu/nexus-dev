@@ -62,7 +62,7 @@ export const Process: React.FC = () => {
           ></div>
 
           {/* 5 Step Indicator Nodes */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 relative z-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4 relative z-10">
             {processSteps.map((step, idx) => {
               const Icon = getStepIcon(idx);
               const isActive = activeStepIndex === idx;
@@ -72,14 +72,14 @@ export const Process: React.FC = () => {
                 <button
                   key={step.number}
                   onClick={() => setActiveStepIndex(idx)}
-                  className={`group text-left p-4 rounded-2xl border transition-all duration-300 ${
+                  className={`group text-left p-3 sm:p-4 rounded-2xl border transition-all duration-300 min-h-[44px] ${
                     isActive 
                       ? 'bg-[#150d36] border-fuchsia-400/80 shadow-lg shadow-fuchsia-950/50 scale-102' 
                       : 'bg-[#0c0822]/70 border-purple-500/20 hover:border-purple-500/40 hover:bg-[#120a30]'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center transition-all ${
                       isActive 
                         ? 'bg-gradient-to-tr from-purple-600 to-pink-600 text-white shadow-md shadow-pink-500/40' 
                         : isPast 
@@ -93,10 +93,10 @@ export const Process: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="text-sm font-bold text-white mb-0.5 tracking-wide">
+                  <div className="text-xs sm:text-sm font-bold text-white mb-0.5 tracking-wide">
                     {step.title}
                   </div>
-                  <div className="text-[11px] text-purple-300/70 line-clamp-1">
+                  <div className="text-[10px] sm:text-[11px] text-purple-300/70 line-clamp-1">
                     {step.tagline}
                   </div>
                 </button>
@@ -107,11 +107,11 @@ export const Process: React.FC = () => {
 
         {/* Active Phase Deep Dive Card */}
         <div className="rounded-3xl p-[1px] bg-gradient-to-r from-purple-500/30 via-fuchsia-500/30 to-indigo-500/20">
-          <div className="rounded-[23px] bg-[#0c0822]/95 backdrop-blur-2xl border border-purple-500/20 p-6 sm:p-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="rounded-[23px] bg-[#0c0822]/95 backdrop-blur-2xl border border-purple-500/20 p-5 sm:p-8 lg:p-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
               
               <div className="lg:col-span-7 space-y-4">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <span className="px-3 py-1 rounded-full bg-fuchsia-950/80 border border-fuchsia-500/40 text-xs font-mono text-fuchsia-300 font-bold">
                     PHASE {activeStep.number} — {activeStep.timeline}
                   </span>
@@ -120,14 +120,14 @@ export const Process: React.FC = () => {
                   </span>
                 </div>
 
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
+                <h3 className="text-xl sm:text-3xl font-extrabold text-white">
                   {activeStep.title}:{' '}
                   <span className="text-purple-300 font-normal">
                     {activeStep.tagline}
                   </span>
                 </h3>
 
-                <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                <p className="text-slate-300 text-xs sm:text-base leading-relaxed">
                   {activeStep.description}
                 </p>
 
@@ -135,7 +135,7 @@ export const Process: React.FC = () => {
                   <h4 className="text-xs font-bold uppercase tracking-wider text-purple-300 mb-3">
                     Deliverables you receive:
                   </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
                     {activeStep.deliverables.map((del) => (
                       <div key={del} className="p-3 rounded-xl bg-purple-950/30 border border-purple-500/15 text-xs text-slate-200 flex items-start gap-2">
                         <CheckCircle2 className="w-3.5 h-3.5 text-fuchsia-400 shrink-0 mt-0.5" />
@@ -147,9 +147,9 @@ export const Process: React.FC = () => {
               </div>
 
               {/* Next Phase Quick Navigation */}
-              <div className="lg:col-span-5 flex flex-col justify-center items-center lg:items-end p-6 rounded-2xl bg-purple-950/20 border border-purple-500/15">
+              <div className="lg:col-span-5 flex flex-col justify-center items-center lg:items-end p-5 sm:p-6 rounded-2xl bg-purple-950/20 border border-purple-500/15">
                 <span className="text-xs text-purple-300/70 font-mono mb-2">Next Milestone</span>
-                <div className="text-lg font-bold text-white mb-4 text-center lg:text-right">
+                <div className="text-base sm:text-lg font-bold text-white mb-4 text-center lg:text-right">
                   {activeStepIndex < processSteps.length - 1 ? (
                     <>Phase 0{activeStepIndex + 2}: {processSteps[activeStepIndex + 1].title}</>
                   ) : (
@@ -160,7 +160,7 @@ export const Process: React.FC = () => {
                 {activeStepIndex < processSteps.length - 1 ? (
                   <button
                     onClick={() => setActiveStepIndex((prev) => Math.min(processSteps.length - 1, prev + 1))}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold tracking-wider hover:opacity-95 shadow-md shadow-purple-950/50"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold tracking-wider hover:opacity-95 shadow-md shadow-purple-950/50 min-h-[44px]"
                   >
                     <span>EXPLORE NEXT PHASE</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -168,7 +168,7 @@ export const Process: React.FC = () => {
                 ) : (
                   <button
                     onClick={() => setActiveStepIndex(0)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-purple-950 border border-purple-500/40 text-purple-200 text-xs font-bold tracking-wider hover:text-white"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-purple-950 border border-purple-500/40 text-purple-200 text-xs font-bold tracking-wider hover:text-white min-h-[44px]"
                   >
                     <span>REVIEW FROM START</span>
                   </button>

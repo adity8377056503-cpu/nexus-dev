@@ -244,80 +244,80 @@ export const servicesData: Service[] = [
   {
     number: '01',
     title: 'Web Development',
-    shortDesc: 'Build modern, responsive and high-performance digital experiences.',
-    fullDesc: 'We engineer blazing-fast, responsive and scalable digital platforms built with modern web architecture. From high-converting business hubs and landing pages to custom applications and digital storefronts, our code is modular, secure, and engineered to scale seamlessly.',
+    shortDesc: 'High-performance, responsive websites and custom web applications engineered for speed, conversions, and scale.',
+    fullDesc: 'Nexus Devs delivers full-stack web development services and modern website design for startups, growing companies, and ambitious brands. We engineer ultra-fast, mobile-first websites and web applications with clean TypeScript architecture, sub-second load times, and intuitive UI/UX. Whether you need a corporate business website, high-converting landing page, headless e-commerce store, or custom web portal, our performance-first engineering turns visitors into engaged customers while giving you a future-proof digital platform.',
     deliverables: [
-      'Business Websites',
-      'Landing Pages',
-      'E-commerce Websites',
-      'Custom Web Applications'
+      'Custom Business Websites',
+      'High-Converting Landing Pages',
+      'Headless E-commerce Solutions',
+      'Full-Stack Web Applications'
     ],
     iconName: 'Code2'
   },
   {
     number: '02',
     title: 'Video Production & Editing',
-    shortDesc: 'Transform ideas into engaging visual stories designed for digital platforms.',
-    fullDesc: 'We craft high-retention short and long-form visual stories tailored for contemporary digital platforms. Combining cinematic pacing, dynamic motion graphics, sound design, and narrative flow to capture viewer attention and build lasting brand authority.',
+    shortDesc: 'Engaging visual storytelling, cinematic motion graphics, and high-retention video editing built for modern digital platforms.',
+    fullDesc: 'As a specialized video production agency and creative editing studio, Nexus Devs crafts scroll-stopping visual content for modern brands, creators, and marketers. We transform raw footage into cinematic promotional videos, YouTube long-form content, and high-retention Instagram Reels and TikTok shorts. By pairing purposeful narrative pacing with custom sound design and motion graphics, we solve audience retention drop-offs and amplify your brand’s digital reach across every social channel.',
     deliverables: [
-      'Reels & Shorts',
-      'Promotional Videos',
-      'YouTube Videos',
-      'Motion Graphics & Video Editing'
+      'Short-Form Reels & TikToks',
+      'Cinematic Promotional Videos',
+      'YouTube Video Production',
+      'Motion Graphics & Visual FX'
     ],
     iconName: 'Video'
   },
   {
     number: '03',
     title: 'Graphic Design',
-    shortDesc: 'Create visually compelling designs that communicate clearly and strengthen digital presence.',
-    fullDesc: 'From high-impact marketing creatives to digital banners and custom thumbnails, we design expressive visual assets that elevate your brand across digital touchpoints and communicate value with absolute clarity.',
+    shortDesc: 'High-impact visual communication, marketing creatives, and digital assets that captivate audiences and elevate brand authority.',
+    fullDesc: 'Our graphic design agency services help modern businesses communicate value with clarity and visual prestige. We craft expressive digital design systems, campaign assets, social media creatives, ad graphics, banners, and high-CTR YouTube thumbnails that command attention in crowded digital feeds. By eliminating visual clutter and generic design patterns, we help ambitious brands establish consistent digital authority and higher conversion rates.',
     deliverables: [
-      'Social Media Creatives',
-      'Posters & Banners',
-      'YouTube Thumbnails',
-      'Digital & Visual Design'
+      'High-CTR Social Media Creatives',
+      'Display Ads & Campaign Banners',
+      'Custom YouTube Thumbnails',
+      'Digital Marketing & Presentation Collateral'
     ],
     iconName: 'Palette'
   },
   {
     number: '04',
     title: 'Branding',
-    shortDesc: 'Build memorable and consistent brand identities that stand out.',
-    fullDesc: 'Stand out in competitive markets with a cohesive and recognizable digital brand. We design logos, color and typography systems, comprehensive brand style guidelines, and collateral that make your business instantly memorable.',
+    shortDesc: 'Distinctive brand identities, memorable vector marks, and comprehensive design systems that leave an indelible impression.',
+    fullDesc: 'Nexus Devs is a branding agency dedicated to giving businesses a distinctive, memorable voice in competitive markets. We develop end-to-end brand identities—including bespoke logo marks, mathematically balanced color palettes, typography hierarchies, and complete digital brand guidelines. We solve brand fragmentation and inconsistency, ensuring your company looks credible, cohesive, and premium across all physical and digital touchpoints.',
     deliverables: [
-      'Logo Design',
-      'Brand Identity',
-      'Brand Guidelines',
-      'Marketing Materials'
+      'Bespoke Logo Mark & Identity',
+      'Comprehensive Brand Guidelines',
+      'Typography & Color Systems',
+      'Brand Collateral & Stationery'
     ],
     iconName: 'Sparkles'
   },
   {
     number: '05',
-    title: 'Data & Analytics',
-    shortDesc: 'Turn business data into useful insights that support smarter decisions.',
-    fullDesc: 'Transform complex business data into clear, actionable executive intelligence. We construct intuitive real-time dashboards, custom KPI telemetry systems, and visual reports that empower faster, data-driven decisions.',
+    title: 'Data & Operations',
+    shortDesc: 'Interactive business dashboards, KPI telemetry systems, and automated operational workflows for data-driven decisions.',
+    fullDesc: 'We provide specialized data analytics services and business dashboard development paired with workflow operations and automation. We eliminate data silos and manual reporting bottlenecks by connecting disparate business tools, APIs, and databases into centralized, real-time executive dashboards. Business leaders gain actionable KPI telemetry, live tracking, and streamlined automated pipelines that reduce manual overhead and accelerate daily operational velocity.',
     deliverables: [
-      'Data Analysis',
-      'Interactive Dashboards',
-      'Reports & KPI Tracking',
-      'Data Visualization'
+      'Custom Business Dashboards',
+      'Real-Time KPI Telemetry',
+      'Data Analytics & Reporting',
+      'Workflow Automation & Process Optimization'
     ],
     iconName: 'BarChart3'
   },
   {
     number: '06',
-    title: 'Operations',
-    shortDesc: 'Improve business processes through organized digital workflows and efficient operations.',
-    fullDesc: 'Streamline operational bottlenecks and elevate team velocity through structured digital processes, workflow optimization, connected toolings, and smart process automation.',
+    title: 'SEO & Digital Growth',
+    shortDesc: 'Technical SEO, keyword research, search performance analysis, and on-page optimization for sustainable organic discovery.',
+    fullDesc: 'Led by our dedicated SEO team, Nexus Devs provides technical SEO services, comprehensive keyword research, on-page optimization, and digital growth strategies for businesses seeking sustainable search visibility. We resolve crawlability issues, enhance Core Web Vitals, implement structured schema markup, and optimize search intent alignment so high-intent customers can discover your brand on Google, driving qualified organic traffic and long-term business growth.',
     deliverables: [
-      'Business Process Support',
-      'Workflow Optimization',
-      'Digital Operations',
-      'Process Automation'
+      'Technical SEO & Site Audits',
+      'Keyword Research & Search Intent Mapping',
+      'On-Page SEO & Content Optimization',
+      'Search Performance Telemetry & Analytics'
     ],
-    iconName: 'Workflow'
+    iconName: 'TrendingUp'
   }
 ];
 

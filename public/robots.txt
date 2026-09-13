@@ -1,0 +1,22 @@
+# Robots.txt for Nexus Devs
+User-agent: *
+Allow: /
+Allow: /#services
+Allow: /#work
+Allow: /#about
+Allow: /#process
+Allow: /#team
+Allow: /#pricing
+Allow: /#reviews
+Allow: /#contact
+Allow: /#faq
+
+# Exclude private authentication, client portal, admin endpoints, and internal API routes
+Disallow: /portal
+Disallow: /login
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /api/
+
+# Sitemap Location
+Sitemap: https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/sitemap.xml

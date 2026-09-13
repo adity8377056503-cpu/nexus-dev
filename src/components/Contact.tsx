@@ -14,20 +14,23 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import type { User } from 'firebase/auth';
+import type { ClientUser } from '../types';
 import { submitProjectInquiry, signInWithGoogle } from '../lib/firebase';
 
 interface ContactProps {
-  user: User | null;
+  user: User | ClientUser | null;
   prefilledPlan?: string;
   prefilledService?: string;
   onOpenClientPortal: () => void;
+  onOpenClientLogin?: () => void;
 }
 
 export const Contact: React.FC<ContactProps> = ({ 
   user, 
   prefilledPlan, 
   prefilledService,
-  onOpenClientPortal 
+  onOpenClientPortal,
+  onOpenClientLogin 
 }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -318,14 +321,18 @@ export const Contact: React.FC<ContactProps> = ({
                         ) : (
                           <button
                             onClick={async () => {
-                              try {
-                                await signInWithGoogle();
-                                onOpenClientPortal();
-                              } catch (e) {
-                                console.error(e);
+                              if (onOpenClientLogin) {
+                                onOpenClientLogin();
+                              } else {
+                                try {
+                                  await signInWithGoogle();
+                                  onOpenClientPortal();
+                                } catch (e) {
+                                  console.error(e);
+                                }
                               }
                             }}
-                            className="px-5 py-2.5 rounded-xl bg-purple-900/50 hover:bg-purple-900 border border-purple-500/30 text-white text-xs font-bold"
+                            className="px-5 py-2.5 rounded-xl bg-purple-900/50 hover:bg-purple-900 border border-purple-500/30 text-white text-xs font-bold transition-all"
                           >
                             Sign In to Track Status
                           </button>
@@ -377,7 +384,7 @@ export const Contact: React.FC<ContactProps> = ({
                             placeholder="e.g. Alex Vance"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors"
+                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors min-h-[44px]"
                           />
                         </div>
 
@@ -391,7 +398,7 @@ export const Contact: React.FC<ContactProps> = ({
                             placeholder="alex@company.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors"
+                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors min-h-[44px]"
                           />
                         </div>
                       </div>
@@ -407,7 +414,7 @@ export const Contact: React.FC<ContactProps> = ({
                             placeholder="e.g. Acme Innovations"
                             value={company}
                             onChange={(e) => setCompany(e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors"
+                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/40 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors min-h-[44px]"
                           />
                         </div>
 
@@ -418,7 +425,7 @@ export const Contact: React.FC<ContactProps> = ({
                           <select
                             value={projectType}
                             onChange={(e) => setProjectType(e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/80 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors"
+                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/80 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors min-h-[44px]"
                           >
                             <option value="Web Development">Web Development</option>
                             <option value="Video Production & Editing">Video Production & Editing</option>
@@ -440,7 +447,7 @@ export const Contact: React.FC<ContactProps> = ({
                           <select
                             value={budget}
                             onChange={(e) => setBudget(e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/80 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors"
+                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/80 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors min-h-[44px]"
                           >
                             <option value="₹25,000 - ₹50,000 (Starter Tier)">₹25,000 - ₹50,000 (Starter Tier)</option>
                             <option value="₹50,000 - ₹1,00,000 (Growth Tier)">₹50,000 - ₹1,00,000 (Growth Tier)</option>
@@ -456,7 +463,7 @@ export const Contact: React.FC<ContactProps> = ({
                           <select
                             value={timeline}
                             onChange={(e) => setTimeline(e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/80 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors"
+                            className="w-full px-4 py-2.5 rounded-xl bg-purple-950/80 border border-purple-500/20 text-white text-sm focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 outline-none transition-colors min-h-[44px]"
                           >
                             <option value="2-3 weeks (Urgent)">2–3 weeks (Urgent)</option>
                             <option value="3-5 weeks (Standard)">3–5 weeks (Standard)</option>
@@ -485,7 +492,7 @@ export const Contact: React.FC<ContactProps> = ({
                         type="submit"
                         disabled={loading}
                         id="contact-submit-btn"
-                        className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 text-white font-bold text-sm tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-purple-900/50 hover:shadow-fuchsia-600/60 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 disabled:opacity-50"
+                        className="w-full py-4 rounded-xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 text-white font-bold text-sm tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-purple-900/50 hover:shadow-fuchsia-600/60 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 disabled:opacity-50 min-h-[48px]"
                       >
                         {loading ? (
                           <span>RECORDING TO DATABASE...</span>

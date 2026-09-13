@@ -6,6 +6,7 @@ import {
   Sparkles, 
   BarChart3, 
   Workflow, 
+  TrendingUp,
   ArrowRight, 
   Check, 
   X 
@@ -35,6 +36,8 @@ export const Services: React.FC<ServicesProps> = ({ onSelectServiceForInquiry })
         return BarChart3;
       case 'Workflow': 
         return Workflow;
+      case 'TrendingUp':
+        return TrendingUp;
       default: 
         return Sparkles;
     }
@@ -70,7 +73,7 @@ export const Services: React.FC<ServicesProps> = ({ onSelectServiceForInquiry })
             const Icon = getIcon(service.iconName);
 
             return (
-              <div
+              <article
                 key={service.number}
                 id={`service-card-${service.number}`}
                 onClick={() => setActiveServiceModal(service)}
@@ -127,7 +130,7 @@ export const Services: React.FC<ServicesProps> = ({ onSelectServiceForInquiry })
                   </div>
 
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
@@ -138,29 +141,29 @@ export const Services: React.FC<ServicesProps> = ({ onSelectServiceForInquiry })
       {activeServiceModal && (
         <div 
           id="service-detail-modal-backdrop"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in overflow-y-auto"
           onClick={() => setActiveServiceModal(null)}
         >
           <div 
             id="service-detail-modal"
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-transparent shadow-2xl"
+            className="relative w-full max-w-xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-transparent shadow-2xl my-auto max-h-[92vh] flex flex-col"
           >
-            <div className="rounded-[23px] bg-[#0d0926] border border-purple-500/30 p-6 sm:p-8 backdrop-blur-2xl">
+            <div className="rounded-[23px] bg-[#0d0926] border border-purple-500/30 p-5 sm:p-8 backdrop-blur-2xl overflow-y-auto">
               
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-purple-500/20">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 sm:gap-3">
                   <span className="text-xs font-mono text-fuchsia-400 font-bold px-2 py-0.5 rounded bg-fuchsia-950/60 border border-fuchsia-500/30">
                     {activeServiceModal.number}
                   </span>
-                  <h3 className="text-white text-lg sm:text-xl font-bold">
+                  <h3 className="text-white text-base sm:text-xl font-bold">
                     {activeServiceModal.title}
                   </h3>
                 </div>
                 <button
                   id="close-service-modal-btn"
                   onClick={() => setActiveServiceModal(null)}
-                  className="p-1.5 rounded-full bg-purple-950/60 text-purple-300 hover:text-white hover:bg-purple-900/60 transition-colors"
+                  className="p-2 rounded-full bg-purple-950/60 text-purple-300 hover:text-white hover:bg-purple-900/60 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                   aria-label="Close modal"
                 >
                   <X className="w-5 h-5" />
@@ -168,7 +171,7 @@ export const Services: React.FC<ServicesProps> = ({ onSelectServiceForInquiry })
               </div>
 
               <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
-                <p className="text-slate-300/90 text-sm sm:text-base leading-relaxed">
+                <p className="text-slate-300/90 text-xs sm:text-base leading-relaxed">
                   {activeServiceModal.fullDesc}
                 </p>
 
@@ -192,7 +195,7 @@ export const Services: React.FC<ServicesProps> = ({ onSelectServiceForInquiry })
                   id="modal-cancel-btn"
                   type="button"
                   onClick={() => setActiveServiceModal(null)}
-                  className="px-4 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white border border-transparent hover:border-purple-500/30 transition-colors"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white border border-purple-500/20 hover:border-purple-500/40 transition-colors min-h-[44px]"
                 >
                   Close
                 </button>
@@ -204,7 +207,7 @@ export const Services: React.FC<ServicesProps> = ({ onSelectServiceForInquiry })
                     setActiveServiceModal(null);
                     onSelectServiceForInquiry(title);
                   }}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold tracking-wider hover:opacity-95 hover:shadow-lg hover:shadow-fuchsia-500/25 transition-all flex items-center justify-center gap-1.5"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold tracking-wider hover:opacity-95 hover:shadow-lg hover:shadow-fuchsia-500/25 transition-all flex items-center justify-center gap-1.5 min-h-[44px]"
                 >
                   REQUEST THIS SERVICE <ArrowRight className="w-3.5 h-3.5" />
                 </button>

@@ -21,9 +21,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   if (!project && !showAllGallery) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
-      <div className="relative w-full max-w-4xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-indigo-500/20 my-8">
-        <div className="rounded-[23px] bg-[#0c0822] border border-purple-500/30 p-6 sm:p-10 backdrop-blur-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
+      <div className="relative w-full max-w-4xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-indigo-500/20 my-auto max-h-[92vh] flex flex-col">
+        <div className="rounded-[23px] bg-[#0c0822] border border-purple-500/30 p-5 sm:p-8 lg:p-10 backdrop-blur-2xl max-h-[90vh] overflow-y-auto">
           
           {/* Header Bar */}
           <div className="flex items-center justify-between pb-4 mb-6 border-b border-purple-500/20">
@@ -36,7 +36,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
             <button
               onClick={onClose}
               id="project-modal-close-btn"
-              className="p-2 rounded-full bg-purple-950/80 text-purple-300 hover:text-white border border-purple-500/20"
+              aria-label="Close project modal"
+              className="p-2 rounded-full bg-purple-950/80 text-purple-300 hover:text-white border border-purple-500/20 min-h-[44px] min-w-[44px] flex items-center justify-center"
             >
               <X className="w-5 h-5" />
             </button>
@@ -160,7 +161,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                         onClose();
                         onStartProjectLikeThis(project.name);
                       }}
-                      className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold tracking-wider hover:opacity-95 shadow-lg shadow-purple-950/60"
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold tracking-wider hover:opacity-95 shadow-lg shadow-purple-950/60 min-h-[44px] flex items-center justify-center"
                     >
                       BUILD A SIMILAR PLATFORM →
                     </button>

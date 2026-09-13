@@ -82,16 +82,16 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Quick Links Col */}
-          <div className="md:col-span-4 space-y-3">
+          <div className="md:col-span-3 space-y-3">
             <span className="text-xs font-mono font-bold uppercase tracking-widest text-purple-400">
               NAVIGATION
             </span>
-            <ul className="grid grid-cols-2 gap-2 text-sm text-slate-300">
+            <ul className="space-y-1.5 text-sm text-slate-300">
               {navLinks.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="hover:text-fuchsia-300 transition-colors block py-1"
+                    className="hover:text-fuchsia-300 transition-colors block py-0.5"
                   >
                     {link.label}
                   </a>
@@ -100,11 +100,50 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
+          {/* Core Services Col */}
+          <div className="md:col-span-3 space-y-3">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-purple-400">
+              SERVICES
+            </span>
+            <ul className="space-y-1.5 text-sm text-slate-300">
+              <li>
+                <a href="#services" className="hover:text-fuchsia-300 transition-colors block py-0.5">
+                  Web Development
+                </a>
+              </li>
+              <li>
+                <a href="#services" className="hover:text-fuchsia-300 transition-colors block py-0.5">
+                  Video Production & Editing
+                </a>
+              </li>
+              <li>
+                <a href="#services" className="hover:text-fuchsia-300 transition-colors block py-0.5">
+                  Graphic Design
+                </a>
+              </li>
+              <li>
+                <a href="#services" className="hover:text-fuchsia-300 transition-colors block py-0.5">
+                  Branding
+                </a>
+              </li>
+              <li>
+                <a href="#services" className="hover:text-fuchsia-300 transition-colors block py-0.5">
+                  Data & Operations
+                </a>
+              </li>
+              <li>
+                <a href="#services" className="hover:text-fuchsia-300 transition-colors block py-0.5">
+                  SEO & Digital Growth
+                </a>
+              </li>
+            </ul>
+          </div>
+
           {/* Back to top Col */}
-          <div className="md:col-span-3 flex md:justify-end items-start">
+          <div className="md:col-span-2 flex md:justify-end items-start">
             <button
               onClick={scrollToTop}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-purple-950/60 border border-purple-500/30 text-xs font-semibold text-purple-200 hover:text-white hover:border-purple-400 transition-all group"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-purple-950/60 border border-purple-500/30 text-xs font-semibold text-purple-200 hover:text-white hover:border-purple-400 transition-all group min-h-[44px]"
             >
               <span>BACK TO TOP</span>
               <ArrowUp className="w-3.5 h-3.5 transition-transform group-hover:-translate-y-0.5" />
@@ -122,13 +161,13 @@ export const Footer: React.FC = () => {
           <div className="flex items-center gap-6">
             <button
               onClick={() => setLegalModal('privacy')}
-              className="hover:text-purple-300 transition-colors"
+              className="hover:text-purple-300 transition-colors py-2"
             >
               Privacy Policy
             </button>
             <button
               onClick={() => setLegalModal('terms')}
-              className="hover:text-purple-300 transition-colors"
+              className="hover:text-purple-300 transition-colors py-2"
             >
               Terms & Conditions
             </button>
@@ -139,16 +178,16 @@ export const Footer: React.FC = () => {
 
       {/* Legal Dialog */}
       {legalModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-lg rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-transparent">
-            <div className="rounded-[23px] bg-[#0d0926] border border-purple-500/30 p-6 sm:p-8 backdrop-blur-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in overflow-y-auto">
+          <div className="relative w-full max-w-lg rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-transparent my-auto max-h-[92vh] flex flex-col">
+            <div className="rounded-[23px] bg-[#0d0926] border border-purple-500/30 p-5 sm:p-8 backdrop-blur-2xl overflow-y-auto">
               <div className="flex items-center justify-between pb-3 border-b border-purple-500/20 mb-4">
                 <h3 className="text-base font-bold text-white uppercase tracking-wider font-mono">
                   {legalModal === 'privacy' ? 'Privacy Policy' : 'Terms & Conditions'}
                 </h3>
                 <button
                   onClick={() => setLegalModal(null)}
-                  className="p-1 rounded-full text-purple-300 hover:text-white"
+                  className="p-2 rounded-full text-purple-300 hover:text-white min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -169,7 +208,7 @@ export const Footer: React.FC = () => {
               <div className="pt-4 mt-4 border-t border-purple-500/20 flex justify-end">
                 <button
                   onClick={() => setLegalModal(null)}
-                  className="px-4 py-2 rounded-xl bg-purple-900/60 hover:bg-purple-800 text-white text-xs font-semibold"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 text-white text-xs font-semibold min-h-[44px]"
                 >
                   Understood
                 </button>

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05030d"/>
+      <stop offset="50%" stop-color="#0e0722"/>
+      <stop offset="100%" stop-color="#070414"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d8b4fe"/>
+      <stop offset="50%" stop-color="#f0abfc"/>
+      <stop offset="100%" stop-color="#f472b6"/>
+    </linearGradient>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333ea"/>
+      <stop offset="50%" stop-color="#c026d3"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="70%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#9333ea" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="850" cy="280" r="450" fill="url(#glow)"/>
+
+  <!-- Border -->
+  <rect x="24" y="24" width="1152" height="582" rx="24" fill="none" stroke="#7e22ce" stroke-width="2" stroke-opacity="0.3"/>
+
+  <!-- Logo Mark -->
+  <g transform="translate(140, 150)">
+    <rect x="-40" y="-40" width="80" height="80" rx="18" fill="#0b061e" stroke="url(#brandGrad)" stroke-width="3"/>
+    <rect x="-22" y="-22" width="44" height="44" rx="10" fill="none" stroke="#e9d5ff" stroke-width="4" transform="rotate(45)"/>
+    <circle cx="0" cy="0" r="7" fill="url(#brandGrad)"/>
+    <text x="60" y="8" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="32" font-weight="900" letter-spacing="3">NEXUS<tspan fill="url(#textGrad)">DEVS</tspan></text>
+    <text x="62" y="32" fill="#c084fc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" letter-spacing="5">DIGITAL STUDIO &amp; AGENCY</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="100" y="290" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="900" letter-spacing="-1">
+    Web Development, Branding,
+  </text>
+  <text x="100" y="354" fill="url(#textGrad)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="900" letter-spacing="-1">
+    Video &amp; Digital Growth.
+  </text>
+
+  <!-- Description -->
+  <text x="100" y="420" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="400">
+    Engineering high-performance web experiences, cinematic visuals, and data-driven solutions.
+  </text>
+
+  <!-- Badges / Service Pills -->
+  <g transform="translate(100, 480)">
+    <rect x="0" y="0" width="165" height="42" rx="21" fill="#1e103d" stroke="#a855f7" stroke-width="1.5" stroke-opacity="0.4"/>
+    <text x="82" y="26" fill="#e9d5ff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="700" text-anchor="middle">Web Development</text>
+
+    <rect x="180" y="0" width="165" height="42" rx="21" fill="#1e103d" stroke="#a855f7" stroke-width="1.5" stroke-opacity="0.4"/>
+    <text x="262" y="26" fill="#e9d5ff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="700" text-anchor="middle">Video Production</text>
+
+    <rect x="360" y="0" width="135" height="42" rx="21" fill="#1e103d" stroke="#a855f7" stroke-width="1.5" stroke-opacity="0.4"/>
+    <text x="427" y="26" fill="#e9d5ff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="700" text-anchor="middle">Branding</text>
+
+    <rect x="510" y="0" width="150" height="42" rx="21" fill="#1e103d" stroke="#a855f7" stroke-width="1.5" stroke-opacity="0.4"/>
+    <text x="585" y="26" fill="#e9d5ff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="700" text-anchor="middle">Data &amp; Operations</text>
+
+    <rect x="675" y="0" width="180" height="42" rx="21" fill="#1e103d" stroke="#a855f7" stroke-width="1.5" stroke-opacity="0.4"/>
+    <text x="765" y="26" fill="#e9d5ff" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="700" text-anchor="middle">SEO &amp; Digital Growth</text>
+  </g>
+</svg>

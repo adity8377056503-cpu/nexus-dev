@@ -10,19 +10,21 @@ import {
   RefreshCw 
 } from 'lucide-react';
 import type { User } from 'firebase/auth';
-import type { ProjectInquiry } from '../types';
+import type { ProjectInquiry, ClientUser } from '../types';
 import { getUserInquiries, signInWithGoogle, logoutUser } from '../lib/firebase';
 
 interface ClientPortalModalProps {
-  user: User | null;
+  user: User | ClientUser | null;
   onClose: () => void;
   onStartNewProject: () => void;
+  onOpenLogin?: () => void;
 }
 
 export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
   user,
   onClose,
   onStartNewProject,
+  onOpenLogin,
 }) => {
   const [inquiries, setInquiries] = useState<ProjectInquiry[]>([]);
   const [loading, setLoading] = useState(false);
@@ -64,19 +66,19 @@ export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
-      <div className="relative w-full max-w-2xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-indigo-500/20 my-8">
-        <div className="rounded-[23px] bg-[#0c0822] border border-purple-500/30 p-6 sm:p-8 backdrop-blur-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
+      <div className="relative w-full max-w-2xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-indigo-500/20 my-auto max-h-[92vh] flex flex-col">
+        <div className="rounded-[23px] bg-[#0c0822] border border-purple-500/30 p-5 sm:p-8 backdrop-blur-2xl overflow-y-auto">
           
           {/* Header */}
           <div className="flex items-center justify-between pb-4 mb-6 border-b border-purple-500/20">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-purple-900/60 border border-purple-500/30 flex items-center justify-center text-purple-300">
+              <div className="w-9 h-9 rounded-xl bg-purple-900/60 border border-purple-500/30 flex items-center justify-center text-purple-300 shrink-0">
                 <FolderKanban className="w-5 h-5 text-fuchsia-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">Client Portal & Project Tracker</h3>
-                <p className="text-xs text-purple-300/70">
+                <h3 className="text-base sm:text-lg font-bold text-white leading-snug">Client Portal & Project Tracker</h3>
+                <p className="text-xs text-purple-300/70 truncate max-w-[200px] sm:max-w-none">
                   {user ? `Connected as ${user.displayName || user.email}` : 'Guest Session (Local + Cloud)'}
                 </p>
               </div>
@@ -85,7 +87,8 @@ export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
             <button
               onClick={onClose}
               id="client-portal-close-btn"
-              className="p-1.5 rounded-full bg-purple-950/80 text-purple-300 hover:text-white"
+              aria-label="Close Client Portal"
+              className="p-2 rounded-full bg-purple-950/80 text-purple-300 hover:text-white min-h-[44px] min-w-[44px] flex items-center justify-center shrink-0"
             >
               <X className="w-5 h-5" />
             </button>
@@ -109,8 +112,8 @@ export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="text-xs text-slate-300">
-                <span className="font-semibold text-white">Sign in with Google</span> to sync your project briefs across devices and receive live status updates.
+              <div className="text-xs text-slate-300 max-w-sm">
+                <span className="font-semibold text-white">Sign in to your client account</span> to sync your project briefs across devices and receive live status updates.
               </div>
             )}
 
@@ -118,20 +121,34 @@ export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
               {user ? (
                 <button
                   onClick={handleSignOut}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/40 border border-red-500/30 text-xs text-red-300 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/40 border border-red-500/30 text-xs text-red-300 transition-colors min-h-[44px]"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span>Sign Out</span>
                 </button>
               ) : (
-                <button
-                  onClick={handleGoogleSignIn}
-                  disabled={signingIn}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold tracking-wider hover:opacity-95 shadow-md shadow-purple-950/40"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{signingIn ? 'Connecting...' : 'Sign In with Google'}</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  {onOpenLogin && (
+                    <button
+                      onClick={() => {
+                        onClose();
+                        onOpenLogin();
+                      }}
+                      className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white text-xs font-bold tracking-wider shadow-md shadow-purple-950/50 transition-all min-h-[44px]"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-fuchsia-200" />
+                      <span>Client Sign In</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={handleGoogleSignIn}
+                    disabled={signingIn}
+                    className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-purple-950/60 hover:bg-purple-900/60 border border-purple-500/30 text-white text-xs font-medium tracking-wide hover:opacity-95 min-h-[44px]"
+                    title="Sign in with Google SSO"
+                  >
+                    <span>{signingIn ? 'Connecting...' : 'Google SSO'}</span>
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -205,7 +222,7 @@ export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
             )}
           </div>
 
-          <div className="pt-6 mt-6 border-t border-purple-500/20 flex items-center justify-between">
+          <div className="pt-6 mt-6 border-t border-purple-500/20 flex flex-wrap items-center justify-between gap-3">
             <span className="text-[11px] text-slate-400 font-mono">
               Nexus Devs Cloud Persistence Active
             </span>
@@ -214,7 +231,7 @@ export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
                 onClose();
                 onStartNewProject();
               }}
-              className="px-4 py-2 rounded-xl bg-purple-900/60 hover:bg-purple-800 text-white text-xs font-bold"
+              className="px-4 py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 text-white text-xs font-bold min-h-[44px] flex items-center justify-center"
             >
               Submit New Brief +
             </button>

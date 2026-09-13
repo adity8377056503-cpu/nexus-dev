@@ -52,7 +52,7 @@ export const Pricing: React.FC<PricingProps> = ({ onSelectPlan }) => {
             <div className="inline-flex p-1 rounded-xl bg-purple-950/70 border border-purple-500/25">
               <button
                 onClick={() => setCurrency('INR')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all min-h-[38px] ${
                   currency === 'INR'
                     ? 'bg-purple-600 text-white shadow-md'
                     : 'text-purple-300/70 hover:text-white'
@@ -62,7 +62,7 @@ export const Pricing: React.FC<PricingProps> = ({ onSelectPlan }) => {
               </button>
               <button
                 onClick={() => setCurrency('USD')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all min-h-[38px] ${
                   currency === 'USD'
                     ? 'bg-purple-600 text-white shadow-md'
                     : 'text-purple-300/70 hover:text-white'
@@ -75,7 +75,7 @@ export const Pricing: React.FC<PricingProps> = ({ onSelectPlan }) => {
         </div>
 
         {/* 3 Tiered Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
           {pricingPlans.map((plan) => {
             const isHighlighted = plan.highlighted;
             const displayPrice = currency === 'INR' ? plan.priceINR : plan.priceUSD;

@@ -25,7 +25,7 @@ export const WhyUs: React.FC = () => {
   };
 
   return (
-    <section className="relative py-24 z-20 overflow-hidden">
+    <section id="why-us" className="relative py-24 z-20 overflow-hidden">
       {/* Subtle atmospheric glow behind why us */}
       <div className="absolute top-1/2 right-1/4 w-80 h-80 bg-fuchsia-900/10 blur-[130px] pointer-events-none"></div>
 
@@ -53,7 +53,7 @@ export const WhyUs: React.FC = () => {
           
           {/* Card 1: Business-focused thinking (Col 7 wide) */}
           <div className="md:col-span-7 rounded-3xl p-[1px] bg-gradient-to-br from-purple-500/30 to-transparent">
-            <div className="h-full rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/20 p-7 sm:p-9 flex flex-col justify-between">
+            <div className="h-full rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/20 p-5 sm:p-7 lg:p-9 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-2.5 py-1 rounded-md bg-purple-950 border border-purple-500/30 text-[10px] font-mono uppercase tracking-wider text-purple-300">
@@ -69,13 +69,13 @@ export const WhyUs: React.FC = () => {
                 </p>
               </div>
 
-              <div className="mt-8 pt-4 border-t border-purple-500/15 flex flex-wrap gap-4 text-xs text-purple-300/80">
+              <div className="mt-6 sm:mt-8 pt-4 border-t border-purple-500/15 flex flex-wrap gap-4 text-xs text-purple-300/80">
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   Conversion Architecture
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   Target Audience Resonance
                 </span>
               </div>
@@ -84,7 +84,7 @@ export const WhyUs: React.FC = () => {
 
           {/* Card 2: Modern Technology (Col 5 wide) */}
           <div className="md:col-span-5 rounded-3xl p-[1px] bg-gradient-to-bl from-fuchsia-500/30 to-transparent">
-            <div className="h-full rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/20 p-7 sm:p-9 flex flex-col justify-between">
+            <div className="h-full rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/20 p-5 sm:p-7 lg:p-9 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-2.5 py-1 rounded-md bg-purple-950 border border-purple-500/30 text-[10px] font-mono uppercase tracking-wider text-fuchsia-300">
@@ -100,7 +100,7 @@ export const WhyUs: React.FC = () => {
                 </p>
               </div>
 
-              <div className="mt-8 pt-4 border-t border-purple-500/15 flex items-center gap-2">
+              <div className="mt-6 sm:mt-8 pt-4 border-t border-purple-500/15 flex items-center gap-2">
                 <span className="text-xs font-mono text-purple-300/90 bg-purple-950/80 px-2.5 py-1 rounded-lg border border-purple-500/20">
                   React 19 • TS • Edge Nodes
                 </span>
@@ -110,7 +110,7 @@ export const WhyUs: React.FC = () => {
 
           {/* Card 3: Premium design (Col 4 wide) */}
           <div className="md:col-span-4 rounded-3xl p-[1px] bg-gradient-to-t from-purple-500/25 to-transparent">
-            <div className="h-full rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/20 p-7 sm:p-8 flex flex-col justify-between">
+            <div className="h-full rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/20 p-5 sm:p-7 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-2.5 py-1 rounded-md bg-purple-950 border border-purple-500/30 text-[10px] font-mono uppercase tracking-wider text-purple-300">
@@ -130,7 +130,7 @@ export const WhyUs: React.FC = () => {
 
           {/* Card 4: Fast communication (Col 4 wide) */}
           <div className="md:col-span-4 rounded-3xl p-[1px] bg-gradient-to-t from-fuchsia-500/25 to-transparent">
-            <div className="h-full rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/20 p-7 sm:p-8 flex flex-col justify-between">
+            <div className="h-full rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/20 p-5 sm:p-7 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-2.5 py-1 rounded-md bg-purple-950 border border-purple-500/30 text-[10px] font-mono uppercase tracking-wider text-pink-300">
@@ -150,7 +150,7 @@ export const WhyUs: React.FC = () => {
 
           {/* Card 5: Performance-first development & Long-term support (Col 4 wide) */}
           <div className="md:col-span-4 rounded-3xl p-[1px] bg-gradient-to-t from-indigo-500/25 to-transparent">
-            <div className="h-full rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/20 p-7 sm:p-8 flex flex-col justify-between">
+            <div className="h-full rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/20 p-5 sm:p-7 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-2.5 py-1 rounded-md bg-purple-950 border border-purple-500/30 text-[10px] font-mono uppercase tracking-wider text-indigo-300">

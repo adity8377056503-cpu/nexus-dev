@@ -35,7 +35,7 @@ export const Team: React.FC = () => {
               id={`team-card-${founder.id}`}
               className="group relative rounded-3xl p-[1px] bg-gradient-to-r from-purple-500/35 via-fuchsia-500/25 to-indigo-500/20 hover:from-fuchsia-500/50 hover:via-purple-500/35 hover:to-indigo-500/30 transition-all duration-300 shadow-2xl shadow-purple-950/30"
             >
-              <div className="rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/25 p-7 sm:p-9 lg:p-10 transition-all duration-300 group-hover:bg-[#0e0926]/95 group-hover:border-purple-400/40">
+              <div className="rounded-[23px] bg-[#0c0822]/90 backdrop-blur-xl border border-purple-500/25 p-5 sm:p-8 lg:p-10 transition-all duration-300 group-hover:bg-[#0e0926]/95 group-hover:border-purple-400/40">
                 
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 lg:gap-10">
                   
@@ -44,7 +44,7 @@ export const Team: React.FC = () => {
                     <div className="flex items-center justify-between">
                       {/* Founder & CEO Distinction Badge */}
                       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-900/60 to-fuchsia-900/40 border border-purple-400/30 text-purple-200 text-xs font-semibold tracking-wider uppercase">
-                        <Sparkles className="w-3.5 h-3.5 text-fuchsia-400" />
+                        <Sparkles className="w-3.5 h-3.5 text-fuchsia-400 shrink-0" />
                         <span>{founder.role}</span>
                       </div>
 
@@ -55,7 +55,7 @@ export const Team: React.FC = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           id="founder-linkedin-btn"
-                          className="w-8 h-8 rounded-full bg-purple-950/80 border border-purple-500/30 flex items-center justify-center text-purple-300 hover:text-white hover:border-fuchsia-400 hover:bg-purple-900/50 transition-all"
+                          className="w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-purple-950/80 border border-purple-500/30 flex items-center justify-center text-purple-300 hover:text-white hover:border-fuchsia-400 hover:bg-purple-900/50 transition-all"
                           title={`Connect with ${founder.name} on LinkedIn`}
                           aria-label={`Connect with ${founder.name} on LinkedIn`}
                         >
@@ -80,11 +80,11 @@ export const Team: React.FC = () => {
                     <div className="text-[11px] uppercase font-bold tracking-wider text-purple-400/80 mb-3">
                       Core Skills:
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {founder.skills.map((skill) => (
                         <span
                           key={skill}
-                          className="px-3 py-1 rounded-lg text-xs font-medium bg-purple-950/80 text-purple-200 border border-purple-500/25 group-hover:border-purple-400/35 transition-colors"
+                          className="px-2.5 sm:px-3 py-1 rounded-lg text-xs font-medium bg-purple-950/80 text-purple-200 border border-purple-500/25 group-hover:border-purple-400/35 transition-colors"
                         >
                           {skill}
                         </span>
@@ -100,21 +100,21 @@ export const Team: React.FC = () => {
         )}
 
         {/* 2. Remaining Team Members Grid (Desktop: 3 cols, Tablet: 2 cols, Mobile: 1 col) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7">
           {specialists.map((member) => (
             <div
               key={member.id}
               id={`team-card-${member.id}`}
               className="group relative rounded-3xl p-[1px] bg-gradient-to-b from-purple-500/20 via-purple-500/10 to-transparent hover:from-fuchsia-500/40 hover:via-purple-500/25 hover:to-indigo-500/20 transition-all duration-300 shadow-xl shadow-purple-950/30 flex flex-col"
             >
-              <div className="h-full rounded-[23px] bg-[#0c0822]/85 backdrop-blur-xl border border-purple-500/20 p-6 sm:p-7 flex flex-col justify-between transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-purple-500/35 group-hover:bg-[#0e0926]/90">
+              <div className="h-full rounded-[23px] bg-[#0c0822]/85 backdrop-blur-xl border border-purple-500/20 p-5 sm:p-7 flex flex-col justify-between transition-all duration-300 group-hover:-translate-y-1.5 group-hover:border-purple-500/35 group-hover:bg-[#0e0926]/90">
                 
                 {/* Top: Role Label, Social, Name, Bio */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     {member.role.toLowerCase().includes('co-founder') ? (
                       <span className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-wider text-fuchsia-200 uppercase px-3 py-1 rounded-full bg-gradient-to-r from-purple-900/80 to-fuchsia-900/60 border border-fuchsia-400/40 shadow-sm shadow-fuchsia-950/40">
-                        <Sparkles className="w-3 h-3 text-fuchsia-400" />
+                        <Sparkles className="w-3 h-3 text-fuchsia-400 shrink-0" />
                         <span>{member.role}</span>
                       </span>
                     ) : (
@@ -128,7 +128,7 @@ export const Team: React.FC = () => {
                         href={member.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-7 h-7 rounded-full bg-purple-950/60 border border-purple-500/20 flex items-center justify-center text-purple-300 hover:text-white hover:border-purple-400 transition-colors"
+                        className="w-8 h-8 sm:w-7 sm:h-7 rounded-full bg-purple-950/60 border border-purple-500/20 flex items-center justify-center text-purple-300 hover:text-white hover:border-purple-400 transition-colors"
                         title={`Connect with ${member.name} on LinkedIn`}
                         aria-label={`Connect with ${member.name} on LinkedIn`}
                       >
@@ -159,8 +159,8 @@ export const Team: React.FC = () => {
                 </div>
 
                 {/* Bottom: Core Skills Pills */}
-                <div className="pt-5 mt-6 border-t border-purple-500/15">
-                  <div className="text-[10px] uppercase font-bold tracking-wider text-purple-400/80 mb-2.5">
+                <div className="pt-4 sm:pt-5 mt-5 sm:mt-6 border-t border-purple-500/15">
+                  <div className="text-[10px] uppercase font-bold tracking-wider text-purple-400/80 mb-2 sm:mb-2.5">
                     Core Skills:
                   </div>
                   <div className="flex flex-wrap gap-1.5">

@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import type { User } from 'firebase/auth';
 import { onAuthUpdate } from './lib/firebase';
-import type { Project } from './types';
+import type { Project, ClientUser } from './types';
 
 // Components
 import { Navbar } from './components/Navbar';
@@ -26,22 +26,56 @@ import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
 import { ClientPortalModal } from './components/ClientPortalModal';
+import { ClientLoginModal } from './components/ClientLoginModal';
 
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | ClientUser | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showAllProjectsModal, setShowAllProjectsModal] = useState(false);
   const [showClientPortal, setShowClientPortal] = useState(false);
+  const [showClientLogin, setShowClientLogin] = useState(false);
   
   const [prefilledPlan, setPrefilledPlan] = useState<string | undefined>();
   const [prefilledService, setPrefilledService] = useState<string | undefined>();
 
-  // Firebase Auth listener
+  // Firebase Auth listener & local client session
   useEffect(() => {
+    // Check if client session stored locally (for instant demo or fallback session)
+    try {
+      const storedSession = localStorage.getItem('nexus_client_session');
+      if (storedSession) {
+        const parsed = JSON.parse(storedSession);
+        if (parsed && parsed.email) {
+          setUser(parsed);
+        }
+      }
+    } catch {
+      // ignore
+    }
+
     const unsubscribe = onAuthUpdate((currentUser) => {
-      setUser(currentUser);
+      if (currentUser) {
+        setUser(currentUser);
+      }
     });
-    return () => unsubscribe();
+
+    // Hash routing for direct login access
+    const handleHash = () => {
+      const hash = window.location.hash;
+      if (hash === '#login' || hash === '#client-login' || hash === '#signin') {
+        setShowClientLogin(true);
+      } else if (hash === '#portal' || hash === '#inquiries') {
+        setShowClientPortal(true);
+      }
+    };
+
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+
+    return () => {
+      unsubscribe();
+      window.removeEventListener('hashchange', handleHash);
+    };
   }, []);
 
   // Smooth scroll to contact section
@@ -69,6 +103,7 @@ export default function App() {
       <Navbar
         user={user}
         onOpenClientPortal={() => setShowClientPortal(true)}
+        onOpenClientLogin={() => setShowClientLogin(true)}
         onStartProject={() => scrollToContact()}
       />
 
@@ -134,6 +169,7 @@ export default function App() {
           prefilledPlan={prefilledPlan}
           prefilledService={prefilledService}
           onOpenClientPortal={() => setShowClientPortal(true)}
+          onOpenClientLogin={() => setShowClientLogin(true)}
         />
 
       </main>
@@ -162,6 +198,17 @@ export default function App() {
         />
       )}
 
+      {/* Dedicated Client Login Modal */}
+      <ClientLoginModal
+        isOpen={showClientLogin}
+        onClose={() => setShowClientLogin(false)}
+        onLoginSuccess={(loggedInUser) => {
+          setUser(loggedInUser);
+          setShowClientLogin(false);
+          setShowClientPortal(true);
+        }}
+      />
+
       {/* Client Portal Modal (Tracking inquiries & Firebase Auth) */}
       {showClientPortal && (
         <ClientPortalModal
@@ -170,6 +217,10 @@ export default function App() {
           onStartNewProject={() => {
             setShowClientPortal(false);
             scrollToContact();
+          }}
+          onOpenLogin={() => {
+            setShowClientPortal(false);
+            setShowClientLogin(true);
           }}
         />
       )}
