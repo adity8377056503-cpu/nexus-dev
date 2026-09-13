@@ -17,17 +17,21 @@ interface NavbarProps {
   onOpenClientPortal: () => void;
   onStartProject: () => void;
   onOpenClientLogin: () => void;
+  onSignOut?: () => Promise<void> | void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
   user, 
   onOpenClientPortal, 
   onStartProject,
-  onOpenClientLogin
+  onOpenClientLogin,
+  onSignOut
 }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [authDropdownOpen, setAuthDropdownOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const [navSignOutError, setNavSignOutError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,12 +41,27 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleSignOut = async () => {
+  const handleSignOut = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setNavSignOutError(null);
+    setSigningOut(true);
     try {
-      await logoutUser();
+      if (onSignOut) {
+        await onSignOut();
+      } else {
+        await logoutUser();
+      }
       setAuthDropdownOpen(false);
-    } catch (e) {
+      setMobileMenuOpen(false);
+    } catch (e: any) {
       console.error('Sign out error:', e);
+      setNavSignOutError(e?.message || 'Failed to sign out. Please try again.');
+      setTimeout(() => setNavSignOutError(null), 4000);
+    } finally {
+      setSigningOut(false);
     }
   };
 
@@ -152,12 +171,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                           <span>My Inquiries & Projects</span>
                         </button>
                         <button
+                          type="button"
+                          id="nav-user-signout-btn"
                           onClick={handleSignOut}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-300 hover:text-red-200 rounded-xl hover:bg-red-950/30 transition-colors text-left"
+                          disabled={signingOut}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-300 hover:text-red-200 rounded-xl hover:bg-red-950/30 transition-colors text-left cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <LogOut className="w-3.5 h-3.5" />
-                          <span>Sign Out</span>
+                          <LogOut className={`w-3.5 h-3.5 ${signingOut ? 'animate-spin' : ''}`} />
+                          <span>{signingOut ? 'Signing Out...' : 'Sign Out'}</span>
                         </button>
+                        {navSignOutError && (
+                          <div className="px-3 py-1.5 text-[11px] text-red-400 bg-red-950/70 border border-red-500/30 rounded-lg mx-1 my-1">
+                            {navSignOutError}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -234,14 +261,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <FolderKanban className="w-4 h-4 text-fuchsia-400" />
                     </button>
                     <button
-                      onClick={() => {
-                        setMobileMenuOpen(false);
-                        handleSignOut();
-                      }}
-                      className="text-left px-4 py-2 text-xs text-red-400 hover:text-red-300"
+                      type="button"
+                      id="nav-mobile-user-signout-btn"
+                      onClick={handleSignOut}
+                      disabled={signingOut}
+                      className="w-full text-left px-4 py-2.5 text-xs text-red-400 hover:text-red-300 cursor-pointer disabled:opacity-50 flex items-center gap-2"
                     >
-                      Sign Out of Session
+                      <LogOut className={`w-3.5 h-3.5 ${signingOut ? 'animate-spin' : ''}`} />
+                      <span>{signingOut ? 'Signing Out...' : 'Sign Out of Session'}</span>
                     </button>
+                    {navSignOutError && (
+                      <div className="px-4 py-1.5 text-[11px] text-red-400 bg-red-950/70 border border-red-500/30 rounded-lg mx-2 my-1">
+                        {navSignOutError}
+                      </div>
+                    )}
                   </>
                 ) : (
                   <button

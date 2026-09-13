@@ -93,12 +93,19 @@ export const logoutUser = async (): Promise<void> => {
   try {
     try {
       localStorage.removeItem('nexus_client_session');
+      sessionStorage.removeItem('nexus_client_session');
     } catch {
       // ignore
     }
     await signOut(auth);
   } catch (error) {
-    console.error('Error signing out:', error);
+    console.error('Error signing out from Firebase:', error);
+    try {
+      localStorage.removeItem('nexus_client_session');
+      sessionStorage.removeItem('nexus_client_session');
+    } catch {
+      // ignore
+    }
     throw error;
   }
 };

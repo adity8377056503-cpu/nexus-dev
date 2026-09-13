@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import type { User } from 'firebase/auth';
-import { onAuthUpdate } from './lib/firebase';
+import { onAuthUpdate, logoutUser } from './lib/firebase';
 import type { Project, ClientUser } from './types';
 
 // Components
@@ -37,10 +37,50 @@ export default function App() {
   
   const [prefilledPlan, setPrefilledPlan] = useState<string | undefined>();
   const [prefilledService, setPrefilledService] = useState<string | undefined>();
+  const [logoutFeedback, setLogoutFeedback] = useState<string | null>(null);
+
+  // Centralized sign out handler
+  const handleSignOut = async () => {
+    try {
+      await logoutUser();
+    } catch (err) {
+      console.error('Logout error from Firebase Auth:', err);
+      // Fallback: guarantee local storage session removal
+      try {
+        localStorage.removeItem('nexus_client_session');
+        sessionStorage.removeItem('nexus_client_session');
+      } catch {
+        // ignore
+      }
+      throw err;
+    } finally {
+      // 1. Immediately clear authenticated user session
+      setUser(null);
+
+      // 2. Close client portal and login modal if open
+      setShowClientPortal(false);
+      setShowClientLogin(false);
+
+      // 3. Return user to the normal public Nexus Devs website (clean URL hash)
+      if (
+        window.location.hash === '#portal' ||
+        window.location.hash === '#inquiries' ||
+        window.location.hash === '#login' ||
+        window.location.hash === '#client-login' ||
+        window.location.hash === '#signin'
+      ) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+
+      // 4. Show brief confirmation
+      setLogoutFeedback('Signed out of client workspace');
+      setTimeout(() => setLogoutFeedback(null), 3500);
+    }
+  };
 
   // Firebase Auth listener & local client session
   useEffect(() => {
-    // Check if client session stored locally (for instant demo or fallback session)
+    // Initial check if client session stored locally (for instant demo or fallback session)
     try {
       const storedSession = localStorage.getItem('nexus_client_session');
       if (storedSession) {
@@ -56,6 +96,22 @@ export default function App() {
     const unsubscribe = onAuthUpdate((currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+      } else {
+        // When Firebase Auth reports null, check if there is an active non-Firebase local session
+        try {
+          const storedSession = localStorage.getItem('nexus_client_session');
+          if (storedSession) {
+            const parsed = JSON.parse(storedSession);
+            if (parsed && parsed.email) {
+              setUser(parsed);
+              return;
+            }
+          }
+        } catch {
+          // ignore
+        }
+        // If neither Firebase nor localStorage has a user, clear the state immediately
+        setUser(null);
       }
     });
 
@@ -105,6 +161,7 @@ export default function App() {
         onOpenClientPortal={() => setShowClientPortal(true)}
         onOpenClientLogin={() => setShowClientLogin(true)}
         onStartProject={() => scrollToContact()}
+        onSignOut={handleSignOut}
       />
 
       {/* Main Content Sections in Visitor Journey */}
@@ -222,7 +279,21 @@ export default function App() {
             setShowClientPortal(false);
             setShowClientLogin(true);
           }}
+          onSignOut={handleSignOut}
         />
+      )}
+
+      {/* Floating Logout Toast Feedback */}
+      {logoutFeedback && (
+        <div 
+          id="logout-feedback-toast"
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-[#0e0a24]/95 border border-purple-500/40 text-xs font-semibold text-purple-200 shadow-2xl backdrop-blur-xl animate-fade-in"
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>{logoutFeedback}</span>
+        </div>
       )}
 
     </div>

@@ -22,9 +22,10 @@ import {
   deleteClientReview 
 } from '../lib/firebase';
 import type { User } from 'firebase/auth';
+import type { ClientUser } from '../types';
 
 interface ClientReviewsProps {
-  user?: User | null;
+  user?: User | ClientUser | null;
 }
 
 export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {

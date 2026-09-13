@@ -7,7 +7,8 @@ import {
   CheckCircle2, 
   LogOut, 
   ExternalLink,
-  RefreshCw 
+  RefreshCw,
+  AlertCircle 
 } from 'lucide-react';
 import type { User } from 'firebase/auth';
 import type { ProjectInquiry, ClientUser } from '../types';
@@ -18,6 +19,7 @@ interface ClientPortalModalProps {
   onClose: () => void;
   onStartNewProject: () => void;
   onOpenLogin?: () => void;
+  onSignOut?: () => Promise<void> | void;
 }
 
 export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
@@ -25,10 +27,13 @@ export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
   onClose,
   onStartNewProject,
   onOpenLogin,
+  onSignOut,
 }) => {
   const [inquiries, setInquiries] = useState<ProjectInquiry[]>([]);
   const [loading, setLoading] = useState(false);
   const [signingIn, setSigningIn] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const [signOutError, setSignOutError] = useState<string | null>(null);
 
   const fetchInquiries = async () => {
     setLoading(true);
@@ -57,17 +62,37 @@ export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
     }
   };
 
-  const handleSignOut = async () => {
+  const handleSignOut = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setSignOutError(null);
+    setSigningOut(true);
     try {
-      await logoutUser();
-    } catch (e) {
+      if (onSignOut) {
+        await onSignOut();
+      } else {
+        await logoutUser();
+        onClose();
+      }
+    } catch (e: any) {
       console.error('Sign out error:', e);
+      setSignOutError(e?.message || 'Failed to sign out. Please try again.');
+    } finally {
+      setSigningOut(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto">
-      <div className="relative w-full max-w-2xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-indigo-500/20 my-auto max-h-[92vh] flex flex-col">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto"
+      onClick={onClose}
+    >
+      <div 
+        className="relative w-full max-w-2xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-indigo-500/20 my-auto max-h-[92vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="rounded-[23px] bg-[#0c0822] border border-purple-500/30 p-5 sm:p-8 backdrop-blur-2xl overflow-y-auto">
           
           {/* Header */}
@@ -119,13 +144,24 @@ export const ClientPortalModal: React.FC<ClientPortalModalProps> = ({
 
             <div>
               {user ? (
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/40 border border-red-500/30 text-xs text-red-300 transition-colors min-h-[44px]"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Sign Out</span>
-                </button>
+                <div className="flex flex-col items-end gap-1.5">
+                  <button
+                    type="button"
+                    id="client-portal-signout-btn"
+                    onClick={handleSignOut}
+                    disabled={signingOut}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-950/40 hover:bg-red-900/50 border border-red-500/30 hover:border-red-500/60 text-xs text-red-300 hover:text-red-100 transition-all min-h-[44px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                  >
+                    <LogOut className={`w-3.5 h-3.5 ${signingOut ? 'animate-spin' : ''}`} />
+                    <span>{signingOut ? 'Signing Out...' : 'Sign Out'}</span>
+                  </button>
+                  {signOutError && (
+                    <div className="text-[11px] text-red-400 bg-red-950/80 border border-red-500/40 rounded-lg px-2.5 py-1 flex items-center gap-1.5 mt-1 max-w-xs text-right">
+                      <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                      <span>{signOutError}</span>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div className="flex flex-wrap items-center gap-2">
                   {onOpenLogin && (
