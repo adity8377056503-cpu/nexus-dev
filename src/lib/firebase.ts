@@ -24,17 +24,20 @@ import {
 } from 'firebase/firestore';
 import type { ProjectInquiry, AgencyStats, ClientReview } from '../types';
 import firebaseConfigData from '../../firebase-applet-config.json';
+import { sendInquiryEmailNotification } from './notifications';
 
-export const FIREBASE_PROJECT_ID = firebaseConfigData.projectId;
-export const FIREBASE_AUTH_DOMAIN = firebaseConfigData.authDomain;
+export const FIREBASE_PROJECT_ID = 
+  import.meta.env.VITE_FIREBASE_PROJECT_ID || firebaseConfigData.projectId;
+export const FIREBASE_AUTH_DOMAIN = 
+  import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfigData.authDomain;
 
 export const firebaseConfig = {
-  apiKey: firebaseConfigData.apiKey,
-  authDomain: firebaseConfigData.authDomain,
-  projectId: firebaseConfigData.projectId,
-  storageBucket: firebaseConfigData.storageBucket,
-  messagingSenderId: firebaseConfigData.messagingSenderId,
-  appId: firebaseConfigData.appId,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || firebaseConfigData.apiKey,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfigData.authDomain,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || firebaseConfigData.projectId,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || firebaseConfigData.storageBucket,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseConfigData.messagingSenderId,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || firebaseConfigData.appId,
 };
 
 // Initialize single Firebase App
@@ -45,9 +48,10 @@ export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-// Initialize Firestore
-export const db = firebaseConfigData.firestoreDatabaseId && firebaseConfigData.firestoreDatabaseId !== '(default)'
-  ? getFirestore(app, firebaseConfigData.firestoreDatabaseId)
+// Initialize Firestore (handles both (default) and custom database IDs)
+const configuredDbId = import.meta.env.VITE_FIREBASE_DATABASE_ID || firebaseConfigData.firestoreDatabaseId;
+export const db = configuredDbId && configuredDbId !== '(default)'
+  ? getFirestore(app, configuredDbId)
   : getFirestore(app);
 
 // Connection validation per Firebase guidelines
@@ -109,6 +113,13 @@ export const submitProjectInquiry = async (
       ...newInquiry,
       serverTime: serverTimestamp(),
     });
+
+    // Safely trigger email notification in the background (non-blocking)
+    const fullInquiry: ProjectInquiry = { ...newInquiry, id: docRef.id };
+    sendInquiryEmailNotification(fullInquiry, docRef.id).catch((err) => {
+      console.warn('Inquiry email notification background status:', err);
+    });
+
     return { id: docRef.id, success: true };
   } catch (error) {
     console.error('Firestore inquiry submission failed:', error);
