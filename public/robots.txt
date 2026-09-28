@@ -1,4 +1,4 @@
-# Robots.txt for Nexus Devs
+﻿# Robots.txt for Nexus Devs
 User-agent: *
 Allow: /
 Allow: /#services
@@ -23,4 +23,5 @@ Disallow: /*#client-login*
 Disallow: /*#signin*
 
 # Sitemap Location
-Sitemap: https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/sitemap.xml
+Sitemap: https://adity8377056503-cpu.github.io/nexus-dev/sitemap.xml
+

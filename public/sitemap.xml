@@ -1,76 +1,77 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <!-- Homepage & Core Landing -->
   <url>
-    <loc>https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/</loc>
+    <loc>https://adity8377056503-cpu.github.io/nexus-dev/</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <!-- Services Section -->
   <url>
-    <loc>https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/#services</loc>
+    <loc>https://adity8377056503-cpu.github.io/nexus-dev/#services</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <!-- Featured Work Portfolio -->
   <url>
-    <loc>https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/#work</loc>
+    <loc>https://adity8377056503-cpu.github.io/nexus-dev/#work</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <!-- About Nexus Devs Agency -->
   <url>
-    <loc>https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/#about</loc>
+    <loc>https://adity8377056503-cpu.github.io/nexus-dev/#about</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- Process Methodology -->
   <url>
-    <loc>https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/#process</loc>
+    <loc>https://adity8377056503-cpu.github.io/nexus-dev/#process</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- Team -->
   <url>
-    <loc>https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/#team</loc>
+    <loc>https://adity8377056503-cpu.github.io/nexus-dev/#team</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <!-- Pricing Plans -->
   <url>
-    <loc>https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/#pricing</loc>
+    <loc>https://adity8377056503-cpu.github.io/nexus-dev/#pricing</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- Verified Client Reviews -->
   <url>
-    <loc>https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/#reviews</loc>
+    <loc>https://adity8377056503-cpu.github.io/nexus-dev/#reviews</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <!-- Contact & Project Brief -->
   <url>
-    <loc>https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/#contact</loc>
+    <loc>https://adity8377056503-cpu.github.io/nexus-dev/#contact</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <!-- FAQ -->
   <url>
-    <loc>https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/#faq</loc>
+    <loc>https://adity8377056503-cpu.github.io/nexus-dev/#faq</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 </urlset>
+
