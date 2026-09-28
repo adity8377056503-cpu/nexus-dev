@@ -72,6 +72,7 @@ export interface PricingPlan {
   timeline: string;
   features: string[];
   highlighted?: boolean;
+  description?: string;
 }
 
 export interface FAQItem {

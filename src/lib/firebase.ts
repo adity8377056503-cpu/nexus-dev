@@ -5,9 +5,6 @@ import {
   signInWithPopup, 
   signOut, 
   onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
   type User 
 } from 'firebase/auth';
 import { 
@@ -17,10 +14,10 @@ import {
   getDocs, 
   query, 
   where, 
-  orderBy, 
   setDoc, 
   doc, 
   getDoc,
+  getDocFromServer,
   updateDoc,
   deleteDoc,
   serverTimestamp 
@@ -28,7 +25,10 @@ import {
 import type { ProjectInquiry, AgencyStats, ClientReview } from '../types';
 import firebaseConfigData from '../../firebase-applet-config.json';
 
-const firebaseConfig = {
+export const FIREBASE_PROJECT_ID = firebaseConfigData.projectId;
+export const FIREBASE_AUTH_DOMAIN = firebaseConfigData.authDomain;
+
+export const firebaseConfig = {
   apiKey: firebaseConfigData.apiKey,
   authDomain: firebaseConfigData.authDomain,
   projectId: firebaseConfigData.projectId,
@@ -37,19 +37,39 @@ const firebaseConfig = {
   appId: firebaseConfigData.appId,
 };
 
-// Initialize Firebase App
+// Initialize single Firebase App
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
-// Initialize Firebase Auth
+// Initialize single Firebase Auth
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-// Initialize Firestore with specific databaseId if present
+// Initialize Firestore
 export const db = firebaseConfigData.firestoreDatabaseId && firebaseConfigData.firestoreDatabaseId !== '(default)'
   ? getFirestore(app, firebaseConfigData.firestoreDatabaseId)
   : getFirestore(app);
 
-// Auth helper functions
+// Connection validation per Firebase guidelines
+async function testFirestoreConnection() {
+  try {
+    await getDocFromServer(doc(db, 'agency_settings', 'stats'));
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('the client is offline')) {
+      console.warn('Firebase connection notice: client is offline or network unavailable.');
+    }
+  }
+}
+testFirestoreConnection();
+
+// Role-based admin check helper
+export const checkIsAdmin = (user: User | null): boolean => {
+  if (!user || !user.email) return false;
+  const adminEmail = 'adity8377056503@gmail.com';
+  return user.email.toLowerCase() === adminEmail.toLowerCase() || (user as any).role === 'admin';
+};
+
+// Authentication helper functions directly backed by Firebase Authentication (Google Auth)
 export const signInWithGoogle = async (): Promise<User | null> => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
@@ -60,52 +80,11 @@ export const signInWithGoogle = async (): Promise<User | null> => {
   }
 };
 
-export const signInWithEmail = async (email: string, pass: string): Promise<User> => {
-  try {
-    const res = await signInWithEmailAndPassword(auth, email, pass);
-    return res.user;
-  } catch (error) {
-    console.error('Error signing in with email/password:', error);
-    throw error;
-  }
-};
-
-export const signUpWithEmail = async (email: string, pass: string): Promise<User> => {
-  try {
-    const res = await createUserWithEmailAndPassword(auth, email, pass);
-    return res.user;
-  } catch (error) {
-    console.error('Error signing up with email/password:', error);
-    throw error;
-  }
-};
-
-export const sendPasswordReset = async (email: string): Promise<void> => {
-  try {
-    await sendPasswordResetEmail(auth, email);
-  } catch (error) {
-    console.error('Error sending password reset email:', error);
-    throw error;
-  }
-};
-
 export const logoutUser = async (): Promise<void> => {
   try {
-    try {
-      localStorage.removeItem('nexus_client_session');
-      sessionStorage.removeItem('nexus_client_session');
-    } catch {
-      // ignore
-    }
     await signOut(auth);
   } catch (error) {
     console.error('Error signing out from Firebase:', error);
-    try {
-      localStorage.removeItem('nexus_client_session');
-      sessionStorage.removeItem('nexus_client_session');
-    } catch {
-      // ignore
-    }
     throw error;
   }
 };
@@ -130,89 +109,56 @@ export const submitProjectInquiry = async (
       ...newInquiry,
       serverTime: serverTimestamp(),
     });
-
-    // Also store in local cache so user can view offline/immediately
-    try {
-      const stored = localStorage.getItem('nexus_my_inquiries');
-      const list = stored ? JSON.parse(stored) : [];
-      list.unshift({ ...newInquiry, id: docRef.id });
-      localStorage.setItem('nexus_my_inquiries', JSON.stringify(list));
-    } catch {
-      // LocalStorage fallback error ignored
-    }
-
     return { id: docRef.id, success: true };
   } catch (error) {
-    console.warn('Firestore write failed, falling back to local persistence:', error);
-    // Fallback to local storage
-    const fallbackId = 'local-' + Date.now();
-    try {
-      const stored = localStorage.getItem('nexus_my_inquiries');
-      const list = stored ? JSON.parse(stored) : [];
-      list.unshift({ ...newInquiry, id: fallbackId });
-      localStorage.setItem('nexus_my_inquiries', JSON.stringify(list));
-    } catch {
-      // LocalStorage fallback error ignored
-    }
-    return { id: fallbackId, success: true };
+    console.error('Firestore inquiry submission failed:', error);
+    throw error;
   }
 };
 
 export const getUserInquiries = async (userId: string, userEmail?: string): Promise<ProjectInquiry[]> => {
+  if (!userId) return [];
   const inquiries: ProjectInquiry[] = [];
 
   try {
     const colRef = collection(db, 'project_inquiries');
-    let q = query(colRef, where('userId', '==', userId), orderBy('createdAt', 'desc'));
-    
-    try {
-      const snap = await getDocs(q);
-      snap.forEach((docSnap) => {
-        inquiries.push({ id: docSnap.id, ...(docSnap.data() as Omit<ProjectInquiry, 'id'>) });
-      });
-    } catch {
-      // If composite index is pending or permission error, try matching email or fallback
-      if (userEmail) {
-        const qEmail = query(colRef, where('email', '==', userEmail));
-        const snap2 = await getDocs(qEmail);
-        snap2.forEach((docSnap) => {
-          if (!inquiries.some((item) => item.id === docSnap.id)) {
-            inquiries.push({ id: docSnap.id, ...(docSnap.data() as Omit<ProjectInquiry, 'id'>) });
-          }
-        });
-      }
-    }
-  } catch (e) {
-    console.warn('Could not fetch from Firestore, checking localStorage', e);
-  }
+    const q = query(colRef, where('userId', '==', userId));
+    const snap = await getDocs(q);
+    snap.forEach((docSnap) => {
+      inquiries.push({ id: docSnap.id, ...(docSnap.data() as Omit<ProjectInquiry, 'id'>) });
+    });
 
-  // Merge with locally saved inquiries
-  try {
-    const stored = localStorage.getItem('nexus_my_inquiries');
-    if (stored) {
-      const localList: ProjectInquiry[] = JSON.parse(stored);
-      for (const item of localList) {
-        if (!inquiries.some((i) => i.id === item.id)) {
-          inquiries.push(item);
+    // If no records found by userId but userEmail exists, check userEmail (for inquiries submitted before login)
+    if (inquiries.length === 0 && userEmail) {
+      const qEmail = query(colRef, where('email', '==', userEmail));
+      const snapEmail = await getDocs(qEmail);
+      snapEmail.forEach((docSnap) => {
+        if (!inquiries.some((item) => item.id === docSnap.id)) {
+          inquiries.push({ id: docSnap.id, ...(docSnap.data() as Omit<ProjectInquiry, 'id'>) });
         }
-      }
+      });
     }
-  } catch {
-    // LocalStorage fallback error ignored
+
+    inquiries.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  } catch (e) {
+    console.error('Error fetching inquiries from Firestore:', e);
+    throw e;
   }
 
   return inquiries;
 };
 
-// Agency Stats persistence (editable placeholders)
+// Agency Stats persistence
 export const saveAgencyStats = async (stats: AgencyStats): Promise<void> => {
+  if (!checkIsAdmin(auth.currentUser)) {
+    throw new Error('Unauthorized: Admin privileges required.');
+  }
   try {
     const statsDocRef = doc(db, 'agency_settings', 'stats');
     await setDoc(statsDocRef, stats, { merge: true });
-    localStorage.setItem('nexus_agency_stats', JSON.stringify(stats));
   } catch (e) {
-    console.warn('Saving stats locally only:', e);
-    localStorage.setItem('nexus_agency_stats', JSON.stringify(stats));
+    console.error('Saving stats to Firestore failed:', e);
+    throw e;
   }
 };
 
@@ -224,18 +170,8 @@ export const getAgencyStats = async (): Promise<AgencyStats | null> => {
       return docSnap.data() as AgencyStats;
     }
   } catch (e) {
-    console.warn('Reading stats from local storage fallback:', e);
+    console.warn('Reading stats from Firestore failed:', e);
   }
-
-  try {
-    const cached = localStorage.getItem('nexus_agency_stats');
-    if (cached) {
-      return JSON.parse(cached);
-    }
-  } catch {
-    // LocalStorage fallback error ignored
-  }
-
   return null;
 };
 
@@ -262,27 +198,10 @@ export const submitClientReview = async (
       serverTime: serverTimestamp(),
     });
     newReview.id = docRef.id;
-
-    // Cache locally as well
-    try {
-      const stored = localStorage.getItem('nexus_all_client_reviews');
-      const list: ClientReview[] = stored ? JSON.parse(stored) : [];
-      list.unshift(newReview);
-      localStorage.setItem('nexus_all_client_reviews', JSON.stringify(list));
-    } catch {}
-
     return { id: docRef.id, success: true };
   } catch (error) {
-    console.warn('Firestore write failed for review, saving to local fallback:', error);
-    const fallbackId = 'rev-' + Date.now();
-    newReview.id = fallbackId;
-    try {
-      const stored = localStorage.getItem('nexus_all_client_reviews');
-      const list: ClientReview[] = stored ? JSON.parse(stored) : [];
-      list.unshift(newReview);
-      localStorage.setItem('nexus_all_client_reviews', JSON.stringify(list));
-    } catch {}
-    return { id: fallbackId, success: true };
+    console.error('Firestore review submission failed:', error);
+    throw error;
   }
 };
 
@@ -308,31 +227,20 @@ export const getApprovedReviews = async (): Promise<ClientReview[]> => {
   } catch (e) {
     console.warn('Could not fetch approved reviews from Firestore:', e);
   }
-
-  // Check local storage for any approved reviews
-  try {
-    const stored = localStorage.getItem('nexus_all_client_reviews');
-    if (stored) {
-      const localList: ClientReview[] = JSON.parse(stored);
-      for (const item of localList) {
-        if (item.status === 'approved' && !list.some((l) => l.id === item.id)) {
-          list.push(item);
-        }
-      }
-    }
-  } catch {}
-
   return list;
 };
 
 export const getAllReviewsForAdmin = async (): Promise<ClientReview[]> => {
-  const map = new Map<string, ClientReview>();
+  if (!checkIsAdmin(auth.currentUser)) {
+    throw new Error('Unauthorized: Admin privileges required.');
+  }
+  const list: ClientReview[] = [];
   try {
     const colRef = collection(db, 'client_reviews');
     const snap = await getDocs(colRef);
     snap.forEach((docSnap) => {
       const data = docSnap.data();
-      map.set(docSnap.id, {
+      list.push({
         id: docSnap.id,
         name: data.name || 'Anonymous',
         rating: data.rating || 5,
@@ -342,59 +250,36 @@ export const getAllReviewsForAdmin = async (): Promise<ClientReview[]> => {
         createdAt: data.createdAt || new Date().toISOString(),
       });
     });
+    list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   } catch (e) {
-    console.warn('Could not fetch all reviews from Firestore for admin:', e);
+    console.error('Could not fetch all reviews from Firestore for admin:', e);
+    throw e;
   }
-
-  try {
-    const stored = localStorage.getItem('nexus_all_client_reviews');
-    if (stored) {
-      const localList: ClientReview[] = JSON.parse(stored);
-      for (const item of localList) {
-        if (!map.has(item.id)) {
-          map.set(item.id, item);
-        }
-      }
-    }
-  } catch {}
-
-  const list = Array.from(map.values());
-  list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   return list;
 };
 
 export const updateReviewStatus = async (reviewId: string, status: 'approved' | 'rejected'): Promise<void> => {
+  if (!checkIsAdmin(auth.currentUser)) {
+    throw new Error('Unauthorized: Admin privileges required.');
+  }
   try {
     const docRef = doc(db, 'client_reviews', reviewId);
     await updateDoc(docRef, { status });
   } catch (e) {
-    console.warn('Could not update review status in Firestore, updating locally:', e);
+    console.error('Could not update review status in Firestore:', e);
+    throw e;
   }
-
-  try {
-    const stored = localStorage.getItem('nexus_all_client_reviews');
-    if (stored) {
-      const localList: ClientReview[] = JSON.parse(stored);
-      const updated = localList.map((item) => (item.id === reviewId ? { ...item, status } : item));
-      localStorage.setItem('nexus_all_client_reviews', JSON.stringify(updated));
-    }
-  } catch {}
 };
 
 export const deleteClientReview = async (reviewId: string): Promise<void> => {
+  if (!checkIsAdmin(auth.currentUser)) {
+    throw new Error('Unauthorized: Admin privileges required.');
+  }
   try {
     const docRef = doc(db, 'client_reviews', reviewId);
     await deleteDoc(docRef);
   } catch (e) {
-    console.warn('Could not delete review from Firestore, deleting locally:', e);
+    console.error('Could not delete review from Firestore:', e);
+    throw e;
   }
-
-  try {
-    const stored = localStorage.getItem('nexus_all_client_reviews');
-    if (stored) {
-      const localList: ClientReview[] = JSON.parse(stored);
-      const filtered = localList.filter((item) => item.id !== reviewId);
-      localStorage.setItem('nexus_all_client_reviews', JSON.stringify(filtered));
-    }
-  } catch {}
 };

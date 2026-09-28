@@ -17,6 +17,10 @@ Disallow: /login
 Disallow: /dashboard
 Disallow: /admin
 Disallow: /api/
+Disallow: /*#portal*
+Disallow: /*#inquiries*
+Disallow: /*#client-login*
+Disallow: /*#signin*
 
 # Sitemap Location
 Sitemap: https://ais-pre-hh5tog3swizkgr6s44stwo-503069262257.asia-east1.run.app/sitemap.xml

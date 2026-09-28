@@ -9,11 +9,10 @@ import {
   Sparkles 
 } from 'lucide-react';
 import type { User } from 'firebase/auth';
-import type { ClientUser } from '../types';
 import { logoutUser } from '../lib/firebase';
 
 interface NavbarProps {
-  user: User | ClientUser | null;
+  user: User | null;
   onOpenClientPortal: () => void;
   onStartProject: () => void;
   onOpenClientLogin: () => void;

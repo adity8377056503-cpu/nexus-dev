@@ -10,7 +10,6 @@ import {
   Trash2, 
   SlidersHorizontal,
   Lock,
-  Unlock,
   AlertCircle
 } from 'lucide-react';
 import type { ClientReview } from '../types';
@@ -19,14 +18,37 @@ import {
   getApprovedReviews, 
   getAllReviewsForAdmin, 
   updateReviewStatus, 
-  deleteClientReview 
+  deleteClientReview,
+  checkIsAdmin,
+  signInWithGoogle
 } from '../lib/firebase';
 import type { User } from 'firebase/auth';
-import type { ClientUser } from '../types';
 
 interface ClientReviewsProps {
-  user?: User | ClientUser | null;
+  user?: User | null;
 }
+
+// Crisp Google 'G' icon for Google Sign-In prompt
+const GoogleIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"
+      fill="#4285F4"
+    />
+    <path
+      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.24v3.15C3.26 21.36 7.33 24 12 24z"
+      fill="#34A853"
+    />
+    <path
+      d="M5.28 14.27a7.22 7.22 0 0 1 0-4.54V6.58H1.24a11.97 11.97 0 0 0 0 10.84l4.04-3.15z"
+      fill="#FBBC05"
+    />
+    <path
+      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.24 6.58l4.04 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+      fill="#EA4335"
+    />
+  </svg>
+);
 
 export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
   const [reviews, setReviews] = useState<ClientReview[]>([]);
@@ -44,18 +66,16 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Admin moderation state
-  const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
   const [showAdminQueue, setShowAdminQueue] = useState(false);
   const [adminReviews, setAdminReviews] = useState<ClientReview[]>([]);
   const [adminFilter, setAdminFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
   const [adminActionLoading, setAdminActionLoading] = useState<string | null>(null);
-  const [adminPasscodePrompt, setShowAdminPasscodePrompt] = useState(false);
-  const [adminPasscode, setAdminPasscode] = useState('');
-  const [passcodeError, setPasscodeError] = useState(false);
+  const [showAdminAuthModal, setShowAdminAuthModal] = useState(false);
+  const [adminSignInLoading, setAdminSignInLoading] = useState(false);
+  const [adminAuthError, setAdminAuthError] = useState<string | null>(null);
 
-  // Automatically recognize owner's email
-  const isOwnerEmail = user?.email === 'adity8377056503@gmail.com';
-  const hasAdminAccess = isOwnerEmail || isAdminUnlocked;
+  // Secure RBAC check backed by Firebase Authentication
+  const hasAdminAccess = checkIsAdmin(user || null);
 
   // Load approved reviews for public view
   const loadPublicReviews = async () => {
@@ -69,7 +89,7 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
     }
   };
 
-  // Load all reviews for admin queue
+  // Load all reviews for admin queue from Firestore
   const loadAdminReviews = async () => {
     try {
       const data = await getAllReviewsForAdmin();
@@ -86,6 +106,9 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
   useEffect(() => {
     if (hasAdminAccess) {
       loadAdminReviews();
+    } else {
+      setShowAdminQueue(false);
+      setAdminReviews([]);
     }
   }, [hasAdminAccess]);
 
@@ -130,7 +153,6 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
       setReviewText('');
       setRating(5);
 
-      // Refresh admin queue if admin is viewing
       if (hasAdminAccess) {
         await loadAdminReviews();
       }
@@ -144,6 +166,10 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
 
   // Admin Actions
   const handleSetStatus = async (reviewId: string, newStatus: 'approved' | 'rejected') => {
+    if (!hasAdminAccess) {
+      console.warn('Unauthorized attempt to moderate review.');
+      return;
+    }
     setAdminActionLoading(reviewId);
     try {
       await updateReviewStatus(reviewId, newStatus);
@@ -157,6 +183,10 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
   };
 
   const handleDelete = async (reviewId: string) => {
+    if (!hasAdminAccess) {
+      console.warn('Unauthorized attempt to delete review.');
+      return;
+    }
     if (!window.confirm('Are you sure you want to permanently delete this review?')) return;
     setAdminActionLoading(reviewId);
     try {
@@ -170,17 +200,23 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
     }
   };
 
-  const handleVerifyPasscode = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Default secret passcode or 'aditya' or 'nexus2026'
-    if (adminPasscode.trim().toLowerCase() === 'nexus' || adminPasscode.trim().toLowerCase() === 'aditya' || adminPasscode.trim() === '2026') {
-      setIsAdminUnlocked(true);
-      setShowAdminPasscodePrompt(false);
-      setShowAdminQueue(true);
-      setPasscodeError(false);
-      setAdminPasscode('');
-    } else {
-      setPasscodeError(true);
+  // Admin Google Sign-In prompt handler
+  const handleAdminGoogleSignIn = async () => {
+    setAdminAuthError(null);
+    setAdminSignInLoading(true);
+    try {
+      const signedIn = await signInWithGoogle();
+      if (signedIn && checkIsAdmin(signedIn)) {
+        setShowAdminAuthModal(false);
+        setShowAdminQueue(true);
+      } else if (signedIn) {
+        setAdminAuthError(`Signed in as ${signedIn.email}. This account does not have administrator privileges.`);
+      }
+    } catch (err: any) {
+      console.error('Admin Google sign-in failed:', err);
+      setAdminAuthError(err?.message || 'Authentication failed. Please try again.');
+    } finally {
+      setAdminSignInLoading(false);
     }
   };
 
@@ -249,11 +285,14 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
             ) : (
               <button
                 id="admin-moderation-unlock-btn"
-                onClick={() => setShowAdminPasscodePrompt(true)}
+                onClick={() => {
+                  setAdminAuthError(null);
+                  setShowAdminAuthModal(true);
+                }}
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-purple-950/40 hover:bg-purple-900/40 border border-purple-500/20 text-purple-400/80 hover:text-purple-200 text-[11px] transition-all"
-                title="Moderation access for Nexus Dev team"
+                title="Administrator review moderation"
               >
-                <Lock className="w-3 h-3 text-purple-400/70" />
+                <ShieldCheck className="w-3 h-3 text-purple-400/70" />
                 <span>Admin Moderation</span>
               </button>
             )}
@@ -540,65 +579,84 @@ export const ClientReviews: React.FC<ClientReviewsProps> = ({ user }) => {
         </div>
       )}
 
-      {/* 2. Admin Passcode Modal (For unlocking review queue if not signed in) */}
-      {adminPasscodePrompt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-sm rounded-3xl p-[1px] bg-gradient-to-b from-purple-500/40 to-transparent shadow-2xl">
-            <div className="rounded-[23px] bg-[#0d0926] border border-purple-500/30 p-6">
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-purple-500/20">
+      {/* 2. Admin Authentication Modal (Secure Firebase Auth Role Verification) */}
+      {showAdminAuthModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="admin-auth-modal-title"
+        >
+          <div className="relative w-full max-w-sm rounded-3xl p-[1px] bg-gradient-to-b from-purple-500/40 via-fuchsia-500/20 to-transparent shadow-2xl">
+            <div className="rounded-[23px] bg-[#0d0926] border border-purple-500/30 p-6 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-purple-500/20">
                 <div className="flex items-center gap-2 text-white font-bold text-sm">
-                  <Lock className="w-4 h-4 text-fuchsia-400" />
-                  <span>Admin Moderation Passcode</span>
+                  <ShieldCheck className="w-4 h-4 text-fuchsia-400" />
+                  <span id="admin-auth-modal-title">Admin Moderation Access</span>
                 </div>
                 <button
-                  onClick={() => setShowAdminPasscodePrompt(false)}
-                  className="text-slate-400 hover:text-white"
+                  type="button"
+                  onClick={() => setShowAdminAuthModal(false)}
+                  className="text-slate-400 hover:text-white p-1 rounded-lg min-h-[32px] min-w-[32px] flex items-center justify-center"
+                  aria-label="Close modal"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <form onSubmit={handleVerifyPasscode} className="space-y-4">
-                <p className="text-xs text-purple-300/80">
-                  Enter agency admin passkey (<code className="text-fuchsia-400 font-mono">nexus</code> or <code className="text-fuchsia-400 font-mono">aditya</code>) to manage and approve client reviews:
-                </p>
-                <input
-                  type="password"
-                  placeholder="Enter passcode"
-                  value={adminPasscode}
-                  onChange={(e) => {
-                    setAdminPasscode(e.target.value);
-                    setPasscodeError(false);
-                  }}
-                  className="w-full px-4 py-2.5 rounded-xl bg-purple-950/60 border border-purple-500/30 text-white text-sm focus:border-fuchsia-400 outline-none"
-                  autoFocus
-                />
-                {passcodeError && (
-                  <p className="text-xs text-rose-400">Invalid passcode. Try 'nexus' or sign in with your admin Google account.</p>
-                )}
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowAdminPasscodePrompt(false)}
-                    className="px-3 py-1.5 text-xs text-slate-400 hover:text-white"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-xs font-bold"
-                  >
-                    Unlock Queue
-                  </button>
+              <div className="text-center space-y-2 py-2">
+                <div className="w-12 h-12 rounded-2xl bg-purple-950/80 border border-purple-500/40 flex items-center justify-center text-fuchsia-400 mx-auto shadow-lg shadow-purple-950/60">
+                  <Lock className="w-6 h-6 text-fuchsia-400" />
                 </div>
-              </form>
+                <h4 className="text-sm font-bold text-white">Administrator Credentials Required</h4>
+                <p className="text-xs text-purple-300/80 leading-relaxed">
+                  Review moderation and status management are restricted to verified agency administrators. Please sign in with your authorized Google account.
+                </p>
+              </div>
+
+              {adminAuthError && (
+                <div className="p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-xs text-rose-300 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
+                  <span className="leading-snug">{adminAuthError}</span>
+                </div>
+              )}
+
+              {user && !hasAdminAccess && (
+                <div className="p-2.5 rounded-xl bg-purple-950/50 border border-purple-500/20 text-[11px] text-purple-300/80 font-mono text-center">
+                  Signed in as: <span className="text-white font-semibold">{user.email}</span>
+                </div>
+              )}
+
+              <div className="space-y-2.5 pt-1">
+                <button
+                  type="button"
+                  onClick={handleAdminGoogleSignIn}
+                  disabled={adminSignInLoading}
+                  className="w-full flex items-center justify-center gap-2.5 py-3 px-4 rounded-xl bg-[#0f0a28] hover:bg-[#150e38] border border-purple-500/40 hover:border-purple-400/70 text-xs font-semibold text-white shadow-md shadow-purple-950/50 transition-all min-h-[44px] cursor-pointer disabled:opacity-50"
+                >
+                  {adminSignInLoading ? (
+                    <div className="w-4 h-4 border-2 border-fuchsia-400 border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <GoogleIcon className="w-4 h-4 shrink-0" />
+                  )}
+                  <span>Sign In as Agency Admin</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowAdminAuthModal(false)}
+                  className="w-full py-2 text-xs text-slate-400 hover:text-white transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
       {/* 3. Admin Review Queue Modal / Drawer */}
-      {showAdminQueue && (
+      {showAdminQueue && hasAdminAccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in">
           <div className="relative w-full max-w-3xl rounded-3xl p-[1px] bg-gradient-to-b from-fuchsia-500/50 via-purple-500/30 to-transparent shadow-2xl max-h-[90vh] flex flex-col">
             <div className="rounded-[23px] bg-[#0c0822] border border-purple-500/30 p-6 flex flex-col h-full overflow-hidden">

@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import type { User } from 'firebase/auth';
 import { onAuthUpdate, logoutUser } from './lib/firebase';
-import type { Project, ClientUser } from './types';
+import type { Project } from './types';
 
 // Components
 import { Navbar } from './components/Navbar';
@@ -27,9 +27,11 @@ import { Footer } from './components/Footer';
 import { ProjectModal } from './components/ProjectModal';
 import { ClientPortalModal } from './components/ClientPortalModal';
 import { ClientLoginModal } from './components/ClientLoginModal';
+import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 
 export default function App() {
-  const [user, setUser] = useState<User | ClientUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showAllProjectsModal, setShowAllProjectsModal] = useState(false);
   const [showClientPortal, setShowClientPortal] = useState(false);
@@ -39,29 +41,28 @@ export default function App() {
   const [prefilledService, setPrefilledService] = useState<string | undefined>();
   const [logoutFeedback, setLogoutFeedback] = useState<string | null>(null);
 
-  // Centralized sign out handler
+  // Centralized Firebase sign out handler
   const handleSignOut = async () => {
     try {
       await logoutUser();
     } catch (err) {
       console.error('Logout error from Firebase Auth:', err);
-      // Fallback: guarantee local storage session removal
-      try {
-        localStorage.removeItem('nexus_client_session');
-        sessionStorage.removeItem('nexus_client_session');
-      } catch {
-        // ignore
-      }
       throw err;
     } finally {
       // 1. Immediately clear authenticated user session
       setUser(null);
 
-      // 2. Close client portal and login modal if open
+      // 2. Clear any lingering client cache from previous session
+      try {
+        localStorage.removeItem('nexus_my_inquiries');
+        localStorage.removeItem('nexus_all_client_reviews');
+      } catch {}
+
+      // 3. Close client portal and login modal if open
       setShowClientPortal(false);
       setShowClientLogin(false);
 
-      // 3. Return user to the normal public Nexus Devs website (clean URL hash)
+      // 4. Return user to the normal public Nexus Devs website (clean URL hash)
       if (
         window.location.hash === '#portal' ||
         window.location.hash === '#inquiries' ||
@@ -72,56 +73,49 @@ export default function App() {
         window.history.replaceState(null, '', window.location.pathname + window.location.search);
       }
 
-      // 4. Show brief confirmation
+      // 5. Show brief confirmation
       setLogoutFeedback('Signed out of client workspace');
       setTimeout(() => setLogoutFeedback(null), 3500);
     }
   };
 
-  // Firebase Auth listener & local client session
-  useEffect(() => {
-    // Initial check if client session stored locally (for instant demo or fallback session)
-    try {
-      const storedSession = localStorage.getItem('nexus_client_session');
-      if (storedSession) {
-        const parsed = JSON.parse(storedSession);
-        if (parsed && parsed.email) {
-          setUser(parsed);
-        }
-      }
-    } catch {
-      // ignore
+  // Safe handler to open Client Portal or prompt login if not authenticated
+  const handleOpenClientPortal = () => {
+    if (user) {
+      setShowClientPortal(true);
+    } else {
+      setShowClientLogin(true);
     }
+  };
 
+  // Firebase Auth listener - single source of truth for authentication state
+  useEffect(() => {
     const unsubscribe = onAuthUpdate((currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        // When Firebase Auth reports null, check if there is an active non-Firebase local session
-        try {
-          const storedSession = localStorage.getItem('nexus_client_session');
-          if (storedSession) {
-            const parsed = JSON.parse(storedSession);
-            if (parsed && parsed.email) {
-              setUser(parsed);
-              return;
-            }
-          }
-        } catch {
-          // ignore
-        }
-        // If neither Firebase nor localStorage has a user, clear the state immediately
-        setUser(null);
-      }
+      setUser(currentUser);
+      setAuthLoading(false);
     });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
-    // Hash routing for direct login access
+  // Hash routing for direct login access and client portal deep-links
+  useEffect(() => {
+    if (authLoading) return; // Wait for Firebase Auth initialization before routing
+
     const handleHash = () => {
       const hash = window.location.hash;
       if (hash === '#login' || hash === '#client-login' || hash === '#signin') {
         setShowClientLogin(true);
       } else if (hash === '#portal' || hash === '#inquiries') {
-        setShowClientPortal(true);
+        // Only open portal if authenticated, otherwise redirect to login
+        if (user) {
+          setShowClientPortal(true);
+          setShowClientLogin(false);
+        } else {
+          setShowClientLogin(true);
+          setShowClientPortal(false);
+        }
       }
     };
 
@@ -129,10 +123,9 @@ export default function App() {
     window.addEventListener('hashchange', handleHash);
 
     return () => {
-      unsubscribe();
       window.removeEventListener('hashchange', handleHash);
     };
-  }, []);
+  }, [user, authLoading]);
 
   // Smooth scroll to contact section
   const scrollToContact = (planName?: string, serviceTitle?: string) => {
@@ -158,7 +151,7 @@ export default function App() {
       {/* 1. Floating Sticky Navbar */}
       <Navbar
         user={user}
-        onOpenClientPortal={() => setShowClientPortal(true)}
+        onOpenClientPortal={handleOpenClientPortal}
         onOpenClientLogin={() => setShowClientLogin(true)}
         onStartProject={() => scrollToContact()}
         onSignOut={handleSignOut}
@@ -174,7 +167,7 @@ export default function App() {
         />
 
         {/* 3. Trust & Stats Section */}
-        <Stats />
+        <Stats user={user} />
 
         {/* 4. Featured Work (Selected Work) */}
         <FeaturedWork
@@ -225,7 +218,7 @@ export default function App() {
           user={user}
           prefilledPlan={prefilledPlan}
           prefilledService={prefilledService}
-          onOpenClientPortal={() => setShowClientPortal(true)}
+          onOpenClientPortal={handleOpenClientPortal}
           onOpenClientLogin={() => setShowClientLogin(true)}
         />
 
@@ -289,12 +282,15 @@ export default function App() {
           id="logout-feedback-toast"
           role="status"
           aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-[#0e0a24]/95 border border-purple-500/40 text-xs font-semibold text-purple-200 shadow-2xl backdrop-blur-xl animate-fade-in"
+          className="fixed bottom-20 right-5 sm:bottom-24 sm:right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-[#0e0a24]/95 border border-purple-500/40 text-xs font-semibold text-purple-200 shadow-2xl backdrop-blur-xl animate-fade-in"
         >
           <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
           <span>{logoutFeedback}</span>
         </div>
       )}
+
+      {/* Floating WhatsApp Action (Bottom-Right, Google/Brand Clean) */}
+      <FloatingWhatsApp />
 
     </div>
   );

@@ -34,5 +34,19 @@
         "createdAt": { "type": "string" }
       }
     }
+  },
+  "firestore": {
+    "/project_inquiries/{inquiryId}": {
+      "schema": "ProjectInquiry",
+      "description": "Client project inquiries and briefs submitted via contact form or portal"
+    },
+    "/agency_settings/{docId}": {
+      "schema": "AgencySettings",
+      "description": "Agency stats and public metrics"
+    },
+    "/client_reviews/{reviewId}": {
+      "schema": "ClientReview",
+      "description": "Client testimonials and reviews with status moderation"
+    }
   }
 }

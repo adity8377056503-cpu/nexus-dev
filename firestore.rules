@@ -1,24 +1,56 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Anyone can submit project inquiries. Authenticated users can read their own.
-    match /project_inquiries/{inquiryId} {
-      allow create: if true;
-      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || resource.data.email == request.auth.token.email);
-      allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
-    }
-    
-    // Agency settings / stats overrides
-    match /agency_settings/{docId} {
-      allow read: if true;
-      allow write: if true;
+
+    function isAuthenticated() {
+      return request.auth != null;
     }
 
-    // Client reviews: anyone can create pending reviews; anyone can read approved reviews; admin can manage
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'adity8377056503@gmail.com' ||
+        request.auth.token.role == 'admin'
+      );
+    }
+
+    // Client project inquiries:
+    // Anyone can submit a project brief. Only the authenticated client or admin can view or manage it.
+    match /project_inquiries/{inquiryId} {
+      allow create: if request.resource.data.name is string
+                    && request.resource.data.email is string
+                    && request.resource.data.description is string;
+
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.email == request.auth.token.email ||
+        isAdmin()
+      );
+
+      allow update, delete: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        isAdmin()
+      );
+    }
+    
+    // Agency settings / metrics:
+    // Publicly readable, write access restricted strictly to verified agency administrators.
+    match /agency_settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Client testimonials & reviews:
+    // Anyone can create a pending review (cannot self-approve).
+    // Approved reviews are public. Admins have full moderation privileges.
     match /client_reviews/{reviewId} {
-      allow create: if request.resource.data.status == 'pending';
-      allow read: if resource.data.status == 'approved' || (request.auth != null && (request.auth.token.email == 'adity8377056503@gmail.com' || request.auth.token.role == 'admin'));
-      allow update, delete: if request.auth != null && (request.auth.token.email == 'adity8377056503@gmail.com' || request.auth.token.role == 'admin');
+      allow create: if request.resource.data.status == 'pending'
+                    && request.resource.data.name is string
+                    && request.resource.data.review is string
+                    && request.resource.data.rating is number;
+
+      allow read: if resource.data.status == 'approved' || isAdmin();
+
+      allow update, delete: if isAdmin();
     }
   }
 }

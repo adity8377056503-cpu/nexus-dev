@@ -14,11 +14,10 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import type { User } from 'firebase/auth';
-import type { ClientUser } from '../types';
 import { submitProjectInquiry, signInWithGoogle } from '../lib/firebase';
 
 interface ContactProps {
-  user: User | ClientUser | null;
+  user: User | null;
   prefilledPlan?: string;
   prefilledService?: string;
   onOpenClientPortal: () => void;

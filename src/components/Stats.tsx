@@ -2,13 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { Settings2, Check, RefreshCw, Sparkles, TrendingUp, Users, Award, Clock } from 'lucide-react';
 import type { AgencyStats } from '../types';
 import { initialStats } from '../data/agencyData';
-import { getAgencyStats, saveAgencyStats } from '../lib/firebase';
+import { getAgencyStats, saveAgencyStats, checkIsAdmin } from '../lib/firebase';
+import type { User } from 'firebase/auth';
 
-export const Stats: React.FC = () => {
+interface StatsProps {
+  user?: User | null;
+}
+
+export const Stats: React.FC<StatsProps> = ({ user }) => {
   const [stats, setStats] = useState<AgencyStats>(initialStats);
   const [isEditing, setIsEditing] = useState(false);
   const [tempStats, setTempStats] = useState<AgencyStats>(initialStats);
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  const hasAdminAccess = checkIsAdmin(user || null);
+
+  useEffect(() => {
+    if (!hasAdminAccess && isEditing) {
+      setIsEditing(false);
+    }
+  }, [hasAdminAccess, isEditing]);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -23,6 +36,7 @@ export const Stats: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!hasAdminAccess) return;
     setStats(tempStats);
     await saveAgencyStats(tempStats);
     setIsEditing(false);
@@ -31,6 +45,7 @@ export const Stats: React.FC = () => {
   };
 
   const handleReset = async () => {
+    if (!hasAdminAccess) return;
     setStats(initialStats);
     setTempStats(initialStats);
     await saveAgencyStats(initialStats);
@@ -95,19 +110,21 @@ export const Stats: React.FC = () => {
                     <Check className="w-3.5 h-3.5" /> Saved to cloud
                   </span>
                 )}
-                <button
-                  onClick={() => setIsEditing(!isEditing)}
-                  id="stats-edit-toggle-btn"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-900/30 hover:bg-purple-900/50 border border-purple-500/25 text-xs text-purple-200 hover:text-white transition-colors min-h-[36px]"
-                >
-                  <Settings2 className="w-3.5 h-3.5 text-fuchsia-400" />
-                  <span>{isEditing ? 'Close Editor' : 'Edit Values'}</span>
-                </button>
+                {hasAdminAccess && (
+                  <button
+                    onClick={() => setIsEditing(!isEditing)}
+                    id="stats-edit-toggle-btn"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-900/30 hover:bg-purple-900/50 border border-purple-500/25 text-xs text-purple-200 hover:text-white transition-colors min-h-[36px]"
+                  >
+                    <Settings2 className="w-3.5 h-3.5 text-fuchsia-400" />
+                    <span>{isEditing ? 'Close Editor' : 'Edit Values'}</span>
+                  </button>
+                )}
               </div>
             </div>
 
-            {/* Editable Form Mode */}
-            {isEditing ? (
+            {/* Editable Form Mode (Strictly restricted to verified Admins) */}
+            {hasAdminAccess && isEditing ? (
               <form onSubmit={handleSave} className="p-4 rounded-2xl bg-[#090518] border border-purple-500/30 mb-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-purple-300">
