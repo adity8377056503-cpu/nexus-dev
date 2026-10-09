@@ -1,3 +1,4 @@
+
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
@@ -79,7 +80,7 @@ function aistudioMediaPlugin(): Plugin {
 
 export default defineConfig(() => {
   return {
-    base: '/nexus-dev/',
+    base: process.env.VERCEL ? '/' : '/nexus-dev/',
     plugins: [react(), tailwindcss(), aistudioMediaPlugin()],
 
     resolve: {
@@ -98,3 +99,4 @@ export default defineConfig(() => {
     },
   };
 });
+
